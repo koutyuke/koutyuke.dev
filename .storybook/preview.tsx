@@ -1,6 +1,7 @@
-import "the-new-css-reset/css/reset.css";
+import type {} from "./storybook-env";
 import "../src/styles/global.css";
 
+import React from "react";
 import type { Preview } from "@storybook/react-vite";
 
 import { ThemeSync } from "../src/features/theme/theme-sync";
@@ -8,10 +9,10 @@ import { ThemeSync } from "../src/features/theme/theme-sync";
 const preview: Preview = {
   decorators: [
     (Story) => (
-      <>
+      <React.Fragment>
         <ThemeSync />
         <Story />
-      </>
+      </React.Fragment>
     ),
   ],
   parameters: {

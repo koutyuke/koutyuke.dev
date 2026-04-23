@@ -1,20 +1,34 @@
 @import "tailwindcss";
+@import "the-new-css-reset/css/reset.css" layer(base);
 @import "@radix-ui/colors/slate.css";
 @import "@radix-ui/colors/slate-dark.css";
 @import "@radix-ui/colors/iris.css";
 @import "@radix-ui/colors/iris-dark.css";
 @import "@radix-ui/colors/red.css";
 @import "@radix-ui/colors/red-dark.css";
+@import "@radix-ui/colors/teal.css";
+@import "@radix-ui/colors/teal-dark.css";
+@import "@radix-ui/colors/yellow.css";
+@import "@radix-ui/colors/yellow-dark.css";
 
 @theme {
   --color-*: initial;
 }
 
 @theme inline {
+  --font-handwritten: "Caveat", cursive;
+  --font-sans: "Zen Maru Gothic", system-ui, sans-serif;
+
   --color-slate-1: var(--slate-1);
   --color-slate-2: var(--slate-2);
   --color-slate-3: var(--slate-3);
+  --color-slate-4: var(--slate-4);
+  --color-slate-5: var(--slate-5);
   --color-slate-6: var(--slate-6);
+  --color-slate-7: var(--slate-7);
+  --color-slate-8: var(--slate-8);
+  --color-slate-9: var(--slate-9);
+  --color-slate-10: var(--slate-10);
   --color-slate-11: var(--slate-11);
   --color-slate-12: var(--slate-12);
 
@@ -22,15 +36,20 @@
   --color-iris-9: var(--iris-9);
   --color-iris-10: var(--iris-10);
 
+  --color-red-5: var(--red-5);
   --color-red-9: var(--red-9);
+
+  --color-teal-4: var(--teal-4);
+  --color-yellow-4: var(--yellow-4);
 }
 
 :root {
   color-scheme: light;
   background: var(--slate-1);
   color: var(--slate-12);
-  font-family: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+  font-family: var(--font-sans);
   font-synthesis: none;
+  scroll-behavior: smooth;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -44,6 +63,51 @@
 body {
   min-width: 320px;
   min-height: 100svh;
+}
+
+.section-grid {
+  background-image:
+    linear-gradient(
+      180deg,
+      transparent 0%,
+      color-mix(in oklab, var(--slate-1), transparent 50%) 75%,
+      var(--slate-1) 100%
+    ),
+    linear-gradient(rgb(28 32 36 / 3%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(28 32 36 / 3%) 1px, transparent 1px);
+  background-size:
+    auto,
+    128px 128px,
+    128px 128px;
+}
+
+:root[data-theme="dark"] .section-grid,
+:root.dark .section-grid {
+  background-image:
+    linear-gradient(
+      180deg,
+      transparent 0%,
+      color-mix(in oklab, var(--slate-1), transparent 50%) 75%,
+      var(--slate-1) 100%
+    ),
+    linear-gradient(rgb(237 238 240 / 3%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(237 238 240 / 3%) 1px, transparent 1px);
+}
+
+.quote-mark::after {
+  display: block;
+  block-size: 0.45em;
+  margin-block-start: -0.35em;
+  border-radius: 999px;
+  background: var(--teal-4);
+  content: "";
+  transform: rotate(-1deg);
+}
+
+.brand-icon > svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
 }
 
 button,

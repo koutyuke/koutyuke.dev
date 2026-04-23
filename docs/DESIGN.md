@@ -10,9 +10,9 @@
 - 色は派手さよりも階調を重視し、Radix Colors の scale を直接使う。
 - Figma の意図を優先し、実装都合で平均的な web layout に寄せない。
 
-## Figma
+## Design Source
 
-Figma は visual source of truth として扱う。
+visual source of truth は Figma の `koutyuke.dev - design` として扱う。
 
 - 全体: <https://www.figma.com/design/oRDua7ZeisW6ooQ6IujYpR/koutyuke.dev---design?m=dev>
 - Hero: <https://www.figma.com/design/oRDua7ZeisW6ooQ6IujYpR/koutyuke.dev---design?node-id=2-2&m=dev>
@@ -21,6 +21,8 @@ Figma は visual source of truth として扱う。
 - Contact: <https://www.figma.com/design/oRDua7ZeisW6ooQ6IujYpR/koutyuke.dev---design?node-id=93-306&m=dev>
 - Footer: <https://www.figma.com/design/oRDua7ZeisW6ooQ6IujYpR/koutyuke.dev---design?node-id=100-648&m=dev>
 - Floating navigation: <https://www.figma.com/design/oRDua7ZeisW6ooQ6IujYpR/koutyuke.dev---design?node-id=100-662&m=dev>
+
+小さな icon は [lucide](https://lucide.dev/) を `@lucide/react` 経由で使う。brand icon (GitHub / Twitter / Zenn) と koutyuke 独自 icon、asterisk などの装飾は `src/assets/icons/` 配下の SVG (`currentColor` 化済み) を使う。section 区切り、highlight underline、timeline line は CSS / Tailwind utility で管理する。
 
 ## Color
 
@@ -41,6 +43,15 @@ Tailwind default colors は使わない。`@radix-ui/colors` を Tailwind v4 の
 ```
 
 semantic token を増やすと Figma と実装の距離が広がるため、現段階では `surface`, `primary`, `muted` のような token は作らない。
+
+## Typography
+
+Google Fonts を使用します。
+
+- 手書き風の typography: Caveat
+- その他の typography: Zen Maru Gothic
+
+`src/styles/global.css` では `--font-sans` を Zen Maru Gothic、`--font-handwritten` を Caveat に割り当てる。通常の本文・UI は Zen Maru Gothic を使い、手書き風の装飾的な text だけ Caveat を使用する。
 
 ## Theme
 

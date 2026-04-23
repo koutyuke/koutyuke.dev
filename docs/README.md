@@ -10,6 +10,8 @@
    次に directory structure と責務分離を確認する。
 3. [FRONTEND.md](./FRONTEND.md)
    実装時の toolchain、state、styling、test の規約を確認する。
+4. [presentational-container-pattern.md](./presentational-container-pattern.md)
+   UI component を Presenter / Container に分離する指針を確認する。フォームや内部ロジックの置き場に迷ったらここを見る。
 
 ## 参照元
 

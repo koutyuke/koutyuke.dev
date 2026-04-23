@@ -4,7 +4,15 @@
     "es2024": true
   },
   "plugins": ["typescript", "react", "import", "unicorn"],
-  "ignorePatterns": [".direnv/**", ".tmp/**", ".vite-hooks/**", "dist/**", "storybook-static/**"],
+  "ignorePatterns": [
+    ".direnv/**",
+    ".playwright-mcp/**",
+    ".serena/**",
+    ".tmp/**",
+    ".vite-hooks/**",
+    "dist/**",
+    "storybook-static/**"
+  ],
   "categories": {
     "correctness": "error",
     "suspicious": "warn",

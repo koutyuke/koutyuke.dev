@@ -69,6 +69,7 @@
 - `docs/DESIGN.md`: visual design、theme、motion、accessibility の方針。
 - `docs/FRONTEND.md`: frontend の実装規約、toolchain、Storybook、test。
 - `docs/ARCHITECTURE.md`: directory structure、data flow、責務分離、coding rules。
+- `docs/presentational-container-pattern.md`: Presenter / Container Pattern の責務、依存方向、フォーム設計指針。
 
 環境構築だけの一時メモを `docs/` に残さない。方針が変わった場合は、該当する恒久ドキュメントへ反映する。
 

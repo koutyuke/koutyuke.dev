@@ -45,3 +45,4 @@ vp build
 - [docs/DESIGN.md](./docs/DESIGN.md): ビジュアル、motion、theme の方針
 - [docs/FRONTEND.md](./docs/FRONTEND.md): frontend 実装と toolchain
 - [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md): 構成、責務、data flow、coding rules
+- [docs/presentational-container-pattern.md](./docs/presentational-container-pattern.md): Presenter / Container Pattern の責務、依存方向、フォーム設計指針

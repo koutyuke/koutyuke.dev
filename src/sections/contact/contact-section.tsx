@@ -1,0 +1,33 @@
+import { Mark } from "../../components/mark/mark";
+import { SectionDivider } from "../../components/section-divider/section-divider";
+import { SocialLinks } from "../../components/social-links/social-links";
+import { socialLinks } from "../../content/profile";
+
+export function ContactSection() {
+  return (
+    <section
+      aria-labelledby="contact-title"
+      className="section-grid overflow-hidden bg-slate-2 px-6 py-16 max-[720px]:px-5"
+      id="contact"
+    >
+      <div className="mx-auto flex w-full max-w-160 flex-col items-center">
+        <SectionDivider className="mb-18 max-[720px]:mb-12" />
+
+        <header className="relative grid gap-1 pb-6 text-center">
+          <p className="m-0 font-handwritten text-xs text-slate-10">Let&apos;s Contact!</p>
+          <h2
+            className="m-0 font-handwritten text-4xl leading-[1.05] text-slate-12"
+            id="contact-title"
+          >
+            <Mark tone="yellow">Say Hello!</Mark>
+          </h2>
+        </header>
+
+        <p className="m-0 pb-6 text-center text-xs font-medium text-slate-10">
+          気軽にのぞいたり、声をかけたり
+        </p>
+        <SocialLinks links={socialLinks} />
+      </div>
+    </section>
+  );
+}
