@@ -1,0 +1,114 @@
+# Frontend
+
+frontend は Vite+ と React を中心に構成する。目的は heavy framework を作ることではなく、1 ページの portfolio を component と motion で保守しやすくすること。
+
+## Commands
+
+基本操作は `vp` に集約する。
+
+```sh
+vp install
+vp dev
+vp check
+vp test
+vp run css:lint
+vp run storybook
+vp build
+```
+
+`pnpm`, `vite`, `vitest`, `oxlint`, `oxfmt` を直接主導線にしない。Vite+ が持っている機能は Vite+ から使う。
+
+## TypeScript
+
+`tsconfig.json` は `@tsconfig/strictest` と `@tsconfig/node24` を基礎にする。
+
+- strict mode を前提にする。
+- `noUncheckedIndexedAccess` と `noPropertyAccessFromIndexSignature` を避けずに受け入れる。
+- DOM の index signature は `dataset["theme"]` のように明示的にアクセスする。
+- test utilities は `vite-plus/test` から import する。
+
+## React
+
+React は routing のためではなく component boundary のために使う。
+
+- client-side router は day one では入れない。
+- section は `sections/` に分ける。
+- behavior を持つ UI は `features/` に分ける。
+- shared helper は `lib/` に置く。
+- component 名は PascalCase、file 名は kebab-case にする。
+
+## State
+
+global state は必要なものだけ Jotai に置く。
+
+- theme mode: `theme-mode-atom`
+- system theme: `system-theme-atom`
+- resolved theme: derived atom
+
+現状の実装では `src/features/theme/theme-atoms.ts` に theme state を置き、DOM 反映は `src/features/theme/theme-sync.tsx` に閉じる。
+
+floating navigation の open / close など局所 UI state は、まず component local state に置く。複数 feature を跨いで共有する必要が出るまで global 化しない。
+
+## Styling
+
+Tailwind CSS v4 を使う。
+
+- global stylesheet は `src/styles/global.css`。
+- reset CSS は `the-new-css-reset`。
+- color は `@radix-ui/colors` を `@theme inline` で公開する。
+- default Tailwind colors は使わない。
+- class merge は `src/lib/cn.ts` の `cn` を使う。
+
+```tsx
+import { cn } from "../lib/cn";
+
+<button className={cn("bg-iris-9 text-slate-1", isActive && "bg-iris-10")} />;
+```
+
+## Import Sort
+
+Oxfmt の import sort に従う。
+
+1. side-effect import
+2. runtime builtin
+3. external library
+4. project / relative import
+
+type import は同じ group 内で value import の後に置く。
+
+```ts
+import { z } from "zod";
+import type { ZodSchema } from "zod";
+```
+
+## Storybook
+
+Storybook は component catalog として使う。
+
+```sh
+vp run storybook:dev
+vp run storybook
+```
+
+story は component の近くに置く。
+
+```text
+src/app/app.tsx
+src/app/app.stories.tsx
+```
+
+## Test
+
+pure helper は unit test を書く。UI は Storybook と必要最小限の interaction test から始める。
+
+- test file は対象 file の近くに置く。
+- `expect`, `test`, `vi` は `vite-plus/test` から import する。
+- TDD が有効な変更では Red → Green → Refactor を守る。
+
+## Lint / Format
+
+- JS / TS / JSON / Markdown: `vp check`
+- CSS: `vp run css:lint`
+- staged files: `vp staged`
+
+Oxfmt / Oxlint / Vitest は直接 install しない。

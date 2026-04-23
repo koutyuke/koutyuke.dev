@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "arrterian.nix-env-selector",
+    "astro-build.astro-vscode",
+    "bradlc.vscode-tailwindcss",
+    "esbenp.prettier-vscode",
+    "jnoortheen.nix-ide",
+    "VoidZero.vite-plus-extension-pack"
+  ]
+}

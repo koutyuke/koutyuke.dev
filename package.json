@@ -1,0 +1,47 @@
+{
+  "name": "koutyuke.dev",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "css:lint": "stylelint \"src/**/*.css\"",
+    "css:lint:fix": "stylelint \"src/**/*.css\" --fix",
+    "deploy": "void deploy",
+    "prepare": "if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then vp exec lefthook install; else echo 'skip lefthook install: not a git repository'; fi",
+    "storybook": "storybook build",
+    "storybook:dev": "storybook dev -p 6006"
+  },
+  "dependencies": {
+    "@radix-ui/colors": "^3.0.0",
+    "clsx": "^2.1.1",
+    "jotai": "^2.19.1",
+    "motion": "^12.38.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "tailwind-merge": "^3.5.0",
+    "the-new-css-reset": "^1.11.3"
+  },
+  "devDependencies": {
+    "@storybook/addon-docs": "^10.3.5",
+    "@storybook/react-vite": "^10.3.5",
+    "@tailwindcss/vite": "^4.2.4",
+    "@tsconfig/node24": "^24.0.4",
+    "@tsconfig/strictest": "^2.0.8",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "lefthook": "^2.1.6",
+    "storybook": "^10.3.5",
+    "stylelint": "^17.9.0",
+    "stylelint-config-standard": "^40.0.0",
+    "tailwindcss": "^4.2.4",
+    "typescript": "~6.0.2",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  },
+  "engines": {
+    "node": "24.x",
+    "pnpm": "10.x"
+  },
+  "packageManager": "pnpm@10.33.1"
+}

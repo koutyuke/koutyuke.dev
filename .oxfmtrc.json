@@ -1,0 +1,42 @@
+{
+  "ignorePatterns": [".direnv/**", ".tmp/**", ".vite-hooks/**", "dist/**", "storybook-static/**"],
+  "insertFinalNewline": true,
+  "printWidth": 100,
+  "proseWrap": "preserve",
+  "semi": true,
+  "singleQuote": false,
+  "sortImports": {
+    "internalPattern": ["@/", "~/", "src/"],
+    "newlinesBetween": false,
+    "groups": [
+      ["side_effect_style", "side_effect", "style"],
+      {
+        "newlinesBetween": true
+      },
+      "value-builtin",
+      "type-builtin",
+      {
+        "newlinesBetween": true
+      },
+      "value-external",
+      "type-external",
+      {
+        "newlinesBetween": true
+      },
+      ["value-internal", "value-parent", "value-sibling", "value-index"],
+      ["type-internal", "type-parent", "type-sibling", "type-index"],
+      "unknown"
+    ]
+  },
+  "sortPackageJson": {
+    "sortScripts": true
+  },
+  "sortTailwindcss": {
+    "stylesheet": "./src/styles/global.css",
+    "functions": ["clsx", "cn"],
+    "preserveWhitespace": false
+  },
+  "tabWidth": 2,
+  "trailingComma": "all",
+  "useTabs": false
+}

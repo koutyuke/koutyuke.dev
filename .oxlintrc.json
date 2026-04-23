@@ -1,0 +1,20 @@
+{
+  "env": {
+    "browser": true,
+    "es2024": true
+  },
+  "plugins": ["typescript", "react", "import", "unicorn"],
+  "ignorePatterns": [".direnv/**", ".tmp/**", ".vite-hooks/**", "dist/**", "storybook-static/**"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "pedantic": "off"
+  },
+  "rules": {
+    "eqeqeq": "error",
+    "no-console": "warn",
+    "no-debugger": "error",
+    "react/jsx-no-useless-fragment": "warn",
+    "react/self-closing-comp": "warn"
+  }
+}
