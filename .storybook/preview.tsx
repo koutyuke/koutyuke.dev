@@ -1,4 +1,4 @@
-import type {} from "./storybook-env";
+// oxlint-disable-next-line import/no-unassigned-import -- side-effect global styles
 import "../src/styles/global.css";
 
 import React from "react";
