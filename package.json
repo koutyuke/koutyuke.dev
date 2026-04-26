@@ -9,7 +9,7 @@
     "deploy": "void deploy",
     "prepare": "if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then vp exec lefthook install; else echo 'skip lefthook install: not a git repository'; fi",
     "storybook": "storybook build",
-    "storybook:dev": "storybook dev -p 6006"
+    "storybook:dev": "storybook dev -p 6006 --no-version-updates --no-open"
   },
   "dependencies": {
     "@radix-ui/colors": "^3.0.0",
