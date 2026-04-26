@@ -1,5 +1,5 @@
-import { BrandIcon } from "../brand-icon/brand-icon";
 import { cn } from "../../lib/cn";
+import { BrandIcon } from "../brand-icon/brand-icon";
 import type { SocialLink } from "../../content/profile";
 
 type SocialLinksProps = {
@@ -18,15 +18,15 @@ export function SocialLinks({ className, links, showLabel = true }: SocialLinksP
         <a
           aria-label={link.label}
           className={cn(
-            "inline-flex items-center gap-1 text-sm font-medium text-slate-11 no-underline transition-[color,transform] duration-150 ease-out",
-            "hover:-translate-y-px hover:text-slate-12 focus-visible:-translate-y-px focus-visible:text-slate-12",
+            "inline-flex items-center gap-1 text-sm font-medium text-slate-11 no-underline transition duration-150 ease-out",
+            "transition hover:-translate-y-0.5 hover:text-slate-12 focus-visible:-translate-y-px focus-visible:text-slate-12",
           )}
           href={link.href}
           key={link.label}
           rel="noreferrer"
           target="_blank"
         >
-          <BrandIcon className={link.icon === "zenn" ? "size-4" : "size-5"} name={link.icon} />
+          <BrandIcon className="size-5" name={link.icon} />
           {showLabel ? <span>{link.label}</span> : null}
         </a>
       ))}
