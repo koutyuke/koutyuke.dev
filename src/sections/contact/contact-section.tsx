@@ -1,7 +1,6 @@
 import { Mark } from "../../components/mark/mark";
 import { SectionDivider } from "../../components/section-divider/section-divider";
 import { SocialLinks } from "../../components/social-links/social-links";
-import { socialLinks } from "../../content/profile";
 
 export function ContactSection() {
   return (
@@ -27,7 +26,7 @@ export function ContactSection() {
           <p className="text-center text-xs font-medium text-slate-10">
             気軽にのぞいたり、声をかけたり
           </p>
-          <SocialLinks links={socialLinks} />
+          <SocialLinks />
         </div>
 
         <SectionDivider />

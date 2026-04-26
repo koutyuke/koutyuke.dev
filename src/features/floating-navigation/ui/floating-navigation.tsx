@@ -1,5 +1,3 @@
-import { portfolioNavigationItems } from "../../../content/navigation";
-import { socialLinks } from "../../../content/profile";
 import { useTheme } from "../../theme/use-theme";
 import { useFloatingNavigationPanel } from "../model/use-floating-navigation-panel";
 import { FloatingNavigationUI } from "./floating-navigation.ui";
@@ -21,8 +19,6 @@ export function FloatingNavigation() {
       slots={{
         MenuPanel: (
           <MenuPanelUI
-            navigationItems={portfolioNavigationItems}
-            socialLinks={socialLinks}
             actions={{
               onClose,
               onOpenAbout,
