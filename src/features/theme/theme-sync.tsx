@@ -1,8 +1,8 @@
 import { useAtom, useAtomValue } from "jotai";
 import { useEffect } from "react";
 
-import { resolvedThemeAtom, systemThemeAtom, themeModeAtom } from "./theme-atoms";
 import { applyResolvedTheme, getSystemTheme } from "./theme";
+import { resolvedThemeAtom, systemThemeAtom, themeModeAtom } from "./theme-atoms";
 
 export function ThemeSync() {
   const resolvedTheme = useAtomValue(resolvedThemeAtom);

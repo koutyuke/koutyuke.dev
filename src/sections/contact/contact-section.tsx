@@ -7,26 +7,30 @@ export function ContactSection() {
   return (
     <section
       aria-labelledby="contact-title"
-      className="section-grid overflow-hidden bg-slate-2 px-6 py-16 max-[720px]:px-5"
+      className="overflow-hidden border-0 border-y border-slate-5/33 bg-slate-2 px-6 py-16 max-[720px]:px-5"
       id="contact"
     >
-      <div className="mx-auto flex w-full max-w-160 flex-col items-center">
-        <SectionDivider className="mb-18 max-[720px]:mb-12" />
+      <div className="mx-auto flex w-full max-w-160 flex-col items-center gap-18 max-[720px]:gap-12">
+        <SectionDivider />
 
-        <header className="relative grid gap-1 pb-6 text-center">
-          <p className="m-0 font-handwritten text-xs text-slate-10">Let&apos;s Contact!</p>
-          <h2
-            className="m-0 font-handwritten text-4xl leading-[1.05] text-slate-12"
-            id="contact-title"
-          >
-            <Mark tone="yellow">Say Hello!</Mark>
-          </h2>
-        </header>
+        <div className="flex flex-col items-center gap-6">
+          <header className="relative grid gap-1 text-center">
+            <p className="m-0 font-handwritten text-xs text-slate-10">Let&apos;s Contact!</p>
+            <h2
+              className="m-0 font-handwritten text-4xl leading-[1.05] text-slate-12"
+              id="contact-title"
+            >
+              <Mark tone="yellow">Say Hello!</Mark>
+            </h2>
+          </header>
 
-        <p className="m-0 pb-6 text-center text-xs font-medium text-slate-10">
-          気軽にのぞいたり、声をかけたり
-        </p>
-        <SocialLinks links={socialLinks} />
+          <p className="text-center text-xs font-medium text-slate-10">
+            気軽にのぞいたり、声をかけたり
+          </p>
+          <SocialLinks links={socialLinks} />
+        </div>
+
+        <SectionDivider />
       </div>
     </section>
   );
