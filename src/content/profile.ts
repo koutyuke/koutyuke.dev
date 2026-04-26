@@ -3,7 +3,8 @@ export const links = {
   twitterAccount: "https://x.com/koutyuke0808",
   zennAccount: "https://zenn.dev/koutyuke",
   blog: "https://blog.koutyuke.dev",
-  siteDesign: "https://www.figma.com/design/oRDua7ZeisW6ooQ6IujYpR/koutyuke.dev---design?m=dev",
+  siteDesign:
+    "https://www.figma.com/design/oRDua7ZeisW6ooQ6IujYpR/koutyuke.dev---design?m=auto&t=0RX1fMwUcA3chAyW-1",
   siteSourceCode: "https://github.com/koutyuke/koutyuke.dev",
 } as const;
 
