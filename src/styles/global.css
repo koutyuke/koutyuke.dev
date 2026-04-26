@@ -129,12 +129,6 @@ body {
   background-repeat: repeat-y;
 }
 
-.brand-icon > svg {
-  display: block;
-  inline-size: 100%;
-  block-size: 100%;
-}
-
 button,
 a {
   touch-action: manipulation;

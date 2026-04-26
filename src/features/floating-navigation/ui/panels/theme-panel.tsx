@@ -1,6 +1,6 @@
 import { Laptop, type LucideIcon, Moon, Sun } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
 
+import { AnimatedCheckIcon } from "../../../../components/icons";
 import { PanelFooterAction, PanelItem } from "./parts";
 import type { ThemeMode } from "../../../theme/theme";
 
@@ -23,33 +23,6 @@ type ThemePanelUIProps = {
     onThemeChange: (theme: ThemeMode) => void;
   };
 };
-
-function AnimatedCheckIcon() {
-  const shouldReduceMotion = useReducedMotion();
-
-  return (
-    <motion.svg
-      aria-hidden="true"
-      className="size-5 shrink-0"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.14, ease: "easeOut" }}
-    >
-      <motion.path
-        d="m4 12 5 5L20 6"
-        initial={shouldReduceMotion ? false : { pathLength: 0 }}
-        animate={{ pathLength: 1 }}
-        transition={{ duration: 0.22 }}
-      />
-    </motion.svg>
-  );
-}
 
 export function ThemePanelUI({ actions: { onBack, onThemeChange }, theme }: ThemePanelUIProps) {
   return (

@@ -1,13 +1,26 @@
 import { ChevronRight, ExternalLink, LineSquiggle, NotebookPen, Palette } from "lucide-react";
+import { Footprints, Hand, House, User } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-import { BrandIcon } from "../../../../components/brand-icon/brand-icon";
-import { externalNavigationLinks, type NavigationItem } from "../../../../content/navigation";
+import { TwitterIcon } from "../../../../components/icons";
+import { links } from "../../../../content/profile";
 import { PanelFooterAction, PanelItem, PanelSeparator } from "./parts";
-import type { SocialLink } from "../../../../content/profile";
+
+export type NavigationItem = {
+  href: `#${string}`;
+  icon: LucideIcon;
+  label: string;
+  note: string;
+};
+
+export const navigationItems = [
+  { href: "#top", icon: House, label: "ホーム", note: "Home" },
+  { href: "#about", icon: User, label: "私について", note: "About me" },
+  { href: "#footprints", icon: Footprints, label: "人生の足あと", note: "Footprint" },
+  { href: "#contact", icon: Hand, label: "つながり", note: "Contact" },
+] as const satisfies readonly NavigationItem[];
 
 type MenuPanelUIProps = {
-  navigationItems: readonly NavigationItem[];
-  socialLinks: readonly SocialLink[];
   actions: {
     onClose: () => void;
     onOpenAbout: () => void;
@@ -15,13 +28,7 @@ type MenuPanelUIProps = {
   };
 };
 
-export function MenuPanelUI({
-  navigationItems,
-  socialLinks,
-  actions: { onClose, onOpenAbout, onOpenTheme },
-}: MenuPanelUIProps) {
-  const twitterLink = socialLinks.find((link) => link.icon === "twitter");
-
+export function MenuPanelUI({ actions: { onClose, onOpenAbout, onOpenTheme } }: MenuPanelUIProps) {
   return (
     <div className="flex size-full flex-col">
       <PanelItem
@@ -76,7 +83,7 @@ export function MenuPanelUI({
 
       <PanelItem
         as="a"
-        href={externalNavigationLinks.blog}
+        href={links.blog}
         rel="noreferrer"
         target="_blank"
         LeftContent={<NotebookPen aria-hidden="true" className="size-6 shrink-0" />}
@@ -86,10 +93,10 @@ export function MenuPanelUI({
       </PanelItem>
       <PanelItem
         as="a"
-        href={twitterLink?.href ?? externalNavigationLinks.twitter}
+        href={links.twitterAccount}
         rel="noreferrer"
         target="_blank"
-        LeftContent={<BrandIcon className="size-6" name="twitter" />}
+        LeftContent={<TwitterIcon aria-hidden="true" className="size-6 shrink-0" />}
         RightContent={<ExternalLink aria-hidden="true" className="size-5 shrink-0" />}
       >
         Follow Me

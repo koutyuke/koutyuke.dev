@@ -1,7 +1,7 @@
 import { ExternalLink } from "lucide-react";
 
-import { BrandIcon } from "../../../../components/brand-icon/brand-icon";
-import { externalNavigationLinks } from "../../../../content/navigation";
+import { FigmaIcon, GithubIcon, KoutyukeIcon } from "../../../../components/icons";
+import { links } from "../../../../content/profile";
 import { PanelFooterAction, PanelItem, PanelSeparator } from "./parts";
 
 type AboutPanelUIProps = {
@@ -15,7 +15,7 @@ export function AboutPanelUI({ actions: { onBack } }: AboutPanelUIProps) {
     <div className="flex size-full flex-col">
       <div className="flex flex-1 flex-col gap-2 p-1">
         <div className="light grid size-12 place-items-center overflow-hidden rounded-md bg-slate-1 text-slate-12">
-          <BrandIcon className="size-12" name="koutyuke" />
+          <KoutyukeIcon className="size-12" />
         </div>
         <p className="text-base font-medium text-slate-12">
           インターネットの片隅にある小さな個人サイトです。
@@ -27,20 +27,20 @@ export function AboutPanelUI({ actions: { onBack } }: AboutPanelUIProps) {
 
       <PanelItem
         as="a"
-        href={externalNavigationLinks.sourceCode}
+        href={links.siteSourceCode}
         target="_blank"
         rel="noreferrer"
-        LeftContent={<BrandIcon className="size-6" name="github" />}
+        LeftContent={<GithubIcon className="size-6" />}
         RightContent={<ExternalLink aria-hidden="true" className="size-5 shrink-0" />}
       >
         Source Code
       </PanelItem>
       <PanelItem
         as="a"
-        href={externalNavigationLinks.design}
+        href={links.siteDesign}
         target="_blank"
         rel="noreferrer"
-        LeftContent={<BrandIcon className="size-6" name="figma" />}
+        LeftContent={<FigmaIcon className="size-6" />}
         RightContent={<ExternalLink aria-hidden="true" className="size-5 shrink-0" />}
       >
         Design
