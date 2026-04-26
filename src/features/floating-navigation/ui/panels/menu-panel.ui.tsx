@@ -4,6 +4,7 @@ import type { LucideIcon } from "lucide-react";
 
 import { TwitterIcon } from "../../../../components/icons";
 import { links } from "../../../../content/profile";
+import { cn } from "../../../../lib/cn";
 import { PanelFooterAction, PanelItem, PanelSeparator } from "./parts";
 
 export type NavigationItem = {
@@ -62,20 +63,25 @@ export function MenuPanelUI({ actions: { onClose, onOpenAbout, onOpenTheme } }: 
 
       <PanelSeparator />
 
-      {navigationItems.map((item) => (
+      {navigationItems.map(({ href, icon: Icon, label, note }) => (
         <PanelItem
           as="a"
-          href={item.href}
-          key={item.href}
+          href={href}
+          key={href}
           onClick={onClose}
-          LeftContent={<item.icon aria-hidden="true" className="size-6 shrink-0" />}
+          LeftContent={
+            <Icon
+              aria-hidden="true"
+              className={cn("size-6 shrink-0", Icon === Hand && "rotate-20")}
+            />
+          }
           RightContent={
             <span className="font-handwritten text-base whitespace-nowrap text-slate-11">
-              {item.note}
+              {note}
             </span>
           }
         >
-          {item.label}
+          {label}
         </PanelItem>
       ))}
 

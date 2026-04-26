@@ -33,7 +33,7 @@ export function ThemePanelUI({ actions: { onBack, onThemeChange }, theme }: Them
           as="button"
           onClick={() => onThemeChange(value)}
           LeftContent={<Icon aria-hidden="true" className="size-6 shrink-0" />}
-          RightContent={theme === value ? <AnimatedCheckIcon /> : null}
+          RightContent={theme === value ? <AnimatedCheckIcon className="size-5" /> : null}
         >
           {label}
         </PanelItem>
