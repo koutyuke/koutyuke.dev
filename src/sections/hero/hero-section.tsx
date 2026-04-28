@@ -1,7 +1,6 @@
 import { ChevronDown } from "lucide-react";
 
 import { AsteriskIcon, KoutyukeIcon } from "../../components/icons";
-import { Mark } from "../../components/mark/mark";
 import { SocialLinks } from "../../components/social-links/social-links";
 
 export function HeroSection() {
@@ -30,13 +29,18 @@ export function HeroSection() {
 
         <div className="relative mb-6 max-w-160 text-xl leading-[1.65] font-medium text-slate-11 max-[720px]:text-base max-[720px]:leading-[1.8]">
           <p>
-            <Mark tone="teal">日々の記録</Mark>と、
-            <Mark tone="yellow">作ったもの</Mark>と、
-            <Mark tone="red">考えたこと</Mark>を静かにつづる場所。
+            <span className="marker-underline text-slate-12">日々の記録</span>と、
+            <span className="marker-underline marker-underline-yellow text-slate-12">
+              作ったもの
+            </span>
+            と、
+            <span className="marker-underline marker-underline-red text-slate-12">考えたこと</span>
+            を静かにつづる場所。
           </p>
           <p>
             I build thoughtful web interfaces with clean code and careful attention to detail.
-            Currently exploring frontend development with <Mark strong>TypeScript</Mark>.
+            Currently exploring frontend development with{" "}
+            <span className="marker-underline text-slate-12">TypeScript</span>.
           </p>
         </div>
 

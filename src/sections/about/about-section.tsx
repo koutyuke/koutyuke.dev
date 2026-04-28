@@ -34,7 +34,7 @@ export function AboutSection() {
           </p>
         </div>
 
-        <p className="quote-mark relative mb-6 inline-block font-handwritten text-xl leading-[1.3] text-slate-11">
+        <p className="marker-underline relative mb-6 inline-block font-handwritten text-xl leading-[1.3] text-slate-12">
           “Code is poetry, but it should also just work.”
         </p>
 

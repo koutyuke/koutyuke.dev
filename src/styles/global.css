@@ -105,21 +105,38 @@ body {
     32px 32px;
 }
 
-.quote-mark {
-  isolation: isolate;
+@theme inline {
+  --marker-underline-color: var(--teal-4);
 }
 
-.quote-mark::after {
+.marker-underline {
+  isolation: isolate;
+  position: relative;
+}
+
+.marker-underline::after {
   position: absolute;
   inset-inline: -0.1em;
   inset-block-end: 0.1em;
   z-index: -1;
   block-size: 0.5em;
   border-radius: 999px;
-  background: var(--teal-4);
+  background: var(--marker-underline-color);
   content: "";
   transform: rotate(-1deg);
   transform-origin: center;
+}
+
+.marker-underline-red {
+  --marker-underline-color: var(--red-5);
+}
+
+.marker-underline-teal {
+  --marker-underline-color: var(--teal-5);
+}
+
+.marker-underline-yellow {
+  --marker-underline-color: var(--yellow-5);
 }
 
 .timeline-line {

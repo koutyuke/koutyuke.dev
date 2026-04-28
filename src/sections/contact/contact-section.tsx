@@ -1,4 +1,3 @@
-import { Mark } from "../../components/mark/mark";
 import { SectionDivider } from "../../components/section-divider/section-divider";
 import { SocialLinks } from "../../components/social-links/social-links";
 
@@ -19,7 +18,7 @@ export function ContactSection() {
               className="m-0 font-handwritten text-4xl leading-[1.05] text-slate-12"
               id="contact-title"
             >
-              <Mark tone="yellow">Say Hello!</Mark>
+              <span className="marker-underline text-slate-12">Say Hello!</span>
             </h2>
           </header>
 
