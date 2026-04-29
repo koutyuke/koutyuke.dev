@@ -6,7 +6,7 @@
 
 <!-- なぜこの変更が必要なのか。Issueや仕様へのリンクがあれば貼る -->
 
-## Changes Details
+## Change Details
 
 <!-- 主な変更点を箇条書きで書く -->
 
