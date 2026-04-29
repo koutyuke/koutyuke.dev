@@ -1,6 +1,15 @@
-import { ChevronRight, ExternalLink, LineSquiggle, NotebookPen, Palette } from "lucide-react";
-import { Footprints, Hand, House, User } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import {
+  ChevronRight,
+  ExternalLink,
+  Footprints,
+  Hand,
+  House,
+  LineSquiggle,
+  NotebookPen,
+  Palette,
+  User,
+  type LucideIcon,
+} from "lucide-react";
 
 import { TwitterIcon } from "../../../../components/icons";
 import { links } from "../../../../content/profile";
