@@ -22,7 +22,7 @@ visual source of truth は Figma の `koutyuke.dev - design` として扱う。
 - Footer: <https://www.figma.com/design/oRDua7ZeisW6ooQ6IujYpR/koutyuke.dev---design?node-id=100-648&m=dev>
 - Floating navigation: <https://www.figma.com/design/oRDua7ZeisW6ooQ6IujYpR/koutyuke.dev---design?node-id=100-662&m=dev>
 
-小さな icon は [lucide](https://lucide.dev/) を `@lucide/react` 経由で使う。brand icon (GitHub / Twitter / Zenn) と koutyuke 独自 icon、asterisk などの装飾は `src/components/icons/` 配下の React component (`currentColor` 化済み) を使う。section 区切り、highlight underline、timeline line は CSS / Tailwind utility で管理する。
+小さな icon は [lucide](https://lucide.dev/) を `lucide-react` 経由で使う。brand icon (GitHub / Twitter / Zenn) と koutyuke 独自 icon、asterisk などの装飾は `src/components/icons/` 配下の React component (`currentColor` 化済み) を使う。section 区切り、highlight underline、timeline line は CSS / Tailwind utility で管理する。
 
 ## Color
 
