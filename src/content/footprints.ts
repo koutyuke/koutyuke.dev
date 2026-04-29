@@ -30,8 +30,8 @@ export const footprints = [
   },
   {
     date: "Aug 2025",
-    title: "サイボウズの1weekサマーインターンに参加",
-    description: "サイボウズの1weekサマーインターンに参加し、kintoneの開発に携わる",
+    title: "サイボウズの2weekサマーインターンに参加",
+    description: "サイボウズの2weekサマーインターンに参加し、kintoneの開発に携わる",
   },
   {
     date: "Apr 2025",
