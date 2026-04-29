@@ -27,6 +27,7 @@ export const PanelItem = <T extends PanelItemElement = "div">({
 
   return (
     <Component
+      type={as === "button" ? "button" : undefined}
       className={cn(
         "flex h-10 items-center gap-2.5 rounded-lg border border-transparent px-2 text-start text-base font-medium text-slate-12 transition hover:border-slate-6 hover:bg-slate-4 focus-visible:bg-slate-4 focus-visible:outline-none",
         as === "a" && "cursor-pointer",
