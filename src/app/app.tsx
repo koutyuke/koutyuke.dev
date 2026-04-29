@@ -1,4 +1,4 @@
-import { FloatingNavigation } from "../features/floating-navigation/floating-navigation";
+import { FloatingNavigation } from "../features/floating-navigation";
 import { AboutSection } from "../sections/about/about-section";
 import { ContactSection } from "../sections/contact/contact-section";
 import { FooterSection } from "../sections/footer/footer-section";

@@ -73,16 +73,19 @@ body {
       color-mix(in oklab, var(--slate-1), transparent 50%) 75%,
       var(--slate-1) 100%
     ),
-    linear-gradient(rgb(28 32 36 / 3%) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(28 32 36 / 3%) 1px, transparent 1px);
+    linear-gradient(transparent 127px, color-mix(in oklab, var(--slate-5) 33%, transparent) 1px),
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--slate-5) 33%, transparent) 1px,
+      transparent 1px
+    );
   background-size:
     auto,
     128px 128px,
     128px 128px;
 }
 
-:root[data-theme="dark"] .section-grid,
-:root.dark .section-grid {
+.section-grid-small {
   background-image:
     linear-gradient(
       180deg,
@@ -90,24 +93,57 @@ body {
       color-mix(in oklab, var(--slate-1), transparent 50%) 75%,
       var(--slate-1) 100%
     ),
-    linear-gradient(rgb(237 238 240 / 3%) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(237 238 240 / 3%) 1px, transparent 1px);
+    linear-gradient(transparent 31px, color-mix(in oklab, var(--slate-5) 33%, transparent) 1px),
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--slate-5) 33%, transparent) 1px,
+      transparent 1px
+    );
+  background-size:
+    auto,
+    32px 32px,
+    32px 32px;
 }
 
-.quote-mark::after {
-  display: block;
-  block-size: 0.45em;
-  margin-block-start: -0.35em;
+@theme inline {
+  --marker-underline-color: var(--teal-4);
+}
+
+.marker-underline {
+  isolation: isolate;
+  position: relative;
+}
+
+.marker-underline::after {
+  position: absolute;
+  inset-inline: -0.1em;
+  inset-block-end: 0.1em;
+  z-index: -1;
+  block-size: 0.5em;
   border-radius: 999px;
-  background: var(--teal-4);
+  background: var(--marker-underline-color);
   content: "";
   transform: rotate(-1deg);
+  transform-origin: center;
 }
 
-.brand-icon > svg {
-  display: block;
-  inline-size: 100%;
-  block-size: 100%;
+.marker-underline-red {
+  --marker-underline-color: var(--red-5);
+}
+
+.marker-underline-teal {
+  --marker-underline-color: var(--teal-5);
+}
+
+.marker-underline-yellow {
+  --marker-underline-color: var(--yellow-5);
+}
+
+.timeline-line {
+  background-image: linear-gradient(to bottom, var(--slate-8) 4px, transparent 4px);
+  background-size: 1px 8px;
+  background-position: center;
+  background-repeat: repeat-y;
 }
 
 button,

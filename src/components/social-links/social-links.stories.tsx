@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { socialLinks } from "../../content/profile";
 import { SocialLinks } from "./social-links";
 
 const meta = {
@@ -14,13 +13,12 @@ type Story = StoryObj<typeof meta>;
 
 export const WithLabels: Story = {
   args: {
-    links: socialLinks,
+    showLabel: true,
   },
 };
 
 export const IconsOnly: Story = {
   args: {
-    links: socialLinks,
     showLabel: false,
   },
 };

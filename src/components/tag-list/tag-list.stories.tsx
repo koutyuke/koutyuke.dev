@@ -20,6 +20,6 @@ export const Primary: Story = {
 
 export const ManyTags: Story = {
   args: {
-    tags: [...techStacks.primary, ...techStacks.framework, ...techStacks.exploring],
+    tags: [...techStacks.primary, ...techStacks.exploring],
   },
 };

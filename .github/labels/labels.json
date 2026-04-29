@@ -1,0 +1,113 @@
+[
+  {
+    "name": "T-Bug",
+    "color": "b60205",
+    "description": "type: bug - 不具合の報告・修正",
+    "ref": null
+  },
+  {
+    "name": "T-Feature",
+    "color": "1d76db",
+    "description": "type: feature - 新機能の追加",
+    "ref": null
+  },
+  {
+    "name": "T-Enhancement",
+    "color": "1d76db",
+    "description": "type: enhancement - 既存機能の拡張・改善",
+    "ref": null
+  },
+  {
+    "name": "T-Refactor",
+    "color": "1d76db",
+    "description": "type: refactor - 構造改善・リファクタリング",
+    "ref": null
+  },
+  {
+    "name": "T-Documentation",
+    "color": "1d76db",
+    "description": "type: documentation - ドキュメントの作成・更新",
+    "ref": null
+  },
+  {
+    "name": "T-Chore",
+    "color": "1d76db",
+    "description": "type: chore - 雑務・メンテ作業",
+    "ref": null
+  },
+
+  {
+    "name": "A-App",
+    "color": "0e8a16",
+    "description": "area: app - アプリケーション全体",
+    "ref": null
+  },
+  {
+    "name": "A-Backend",
+    "color": "0e8a16",
+    "description": "area: backend - バックエンド",
+    "ref": null
+  },
+  {
+    "name": "A-Web",
+    "color": "0e8a16",
+    "description": "area: web - Web フロント",
+    "ref": null
+  },
+  {
+    "name": "A-Mobile",
+    "color": "0e8a16",
+    "description": "area: mobile - モバイルアプリ",
+    "ref": null
+  },
+  {
+    "name": "A-Packages",
+    "color": "0e8a16",
+    "description": "area: packages - パッケージ",
+    "ref": null
+  },
+
+  {
+    "name": "P-Critical",
+    "color": "ff42a0",
+    "description": "priority: critical - 最優先・即時対応",
+    "ref": null
+  },
+  {
+    "name": "P-High",
+    "color": "ff42a0",
+    "description": "priority: high - 高優先",
+    "ref": null
+  },
+  {
+    "name": "P-Medium",
+    "color": "ff42a0",
+    "description": "priority: medium - 中優先",
+    "ref": null
+  },
+  {
+    "name": "P-Low",
+    "color": "ff42a0",
+    "description": "priority: low - 低優先",
+    "ref": null
+  },
+
+  {
+    "name": "S-Epic",
+    "color": "fbca04",
+    "description": "scope: epic - 複数Issueを束ねる大項目",
+    "ref": null
+  },
+  {
+    "name": "S-Task",
+    "color": "fbca04",
+    "description": "scope: task - 通常の作業単位",
+    "ref": null
+  },
+  {
+    "name": "S-Hotfix",
+    "color": "b60205",
+    "description": "scope: hotfix - 緊急修正",
+    "ref": null
+  }
+]

@@ -2,9 +2,10 @@ name: CI
 
 on:
   pull_request:
-  push:
-    branches:
-      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
   verify:
@@ -16,6 +17,7 @@ jobs:
       - name: Setup Vite+
         uses: voidzero-dev/setup-vp@v1
         with:
+          node-version: "24"
           cache: true
 
       - name: Install dependencies

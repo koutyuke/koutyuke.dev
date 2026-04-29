@@ -22,10 +22,14 @@ src/
     app.stories.tsx
   features/
     theme/
-      theme.ts
-      theme-atoms.ts
-      theme-sync.tsx
-      use-theme.ts
+      index.ts
+      lib/
+        theme.ts
+      model/
+        theme-atoms.ts
+        use-theme.ts
+      ui/
+        theme-sync.tsx
   lib/
     cn.ts
   styles/
