@@ -56,7 +56,7 @@ export const PanelFooterAction = ({ type, onClick }: PanelFooterActionProps): JS
   return (
     <button
       aria-label={type === "back" ? "戻る" : "閉じる"}
-      className="grid h-10 w-full place-items-center rounded-lg border border-slate-7 bg-slate-4 text-slate-12 transition hover:bg-slate-5 focus-visible:bg-slate-5 focus-visible:outline-none"
+      className="pointer-events-auto grid h-10 w-full cursor-pointer place-items-center rounded-lg border border-slate-7 bg-slate-4 text-slate-12 transition hover:bg-slate-5 focus-visible:bg-slate-5 focus-visible:outline-none"
       type="button"
       onClick={onClick}
     >
