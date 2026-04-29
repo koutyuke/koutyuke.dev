@@ -1,17 +1,22 @@
 import type { FC } from "react";
 
+import { resolveStrokeIconProps } from "./lucide-props";
 import type { IconProps } from "./type";
 
 export const KoutyukeIcon: FC<IconProps> = (props) => {
+  const { color, size, strokeWidth, svgProps } = resolveStrokeIconProps(props, 2.19947);
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 100 100"
+      width={size}
+      height={size}
       fill="none"
-      stroke="currentColor"
-      strokeWidth="2.19947"
+      stroke={color}
+      strokeWidth={strokeWidth}
       strokeLinecap="round"
-      {...props}
+      {...svgProps}
     >
       <path d="M27.7567 47.3057C26.3327 57.383 28.1817 67.624 45.8549 67.9225C45.9885 67.9248 46.1507 67.9318 46.1941 68.0581C46.2885 68.3328 46.3854 69.1295 46.2871 71.3898" />
       <path d="M64.2129 13.3789C69.252 15.0586 71.8885 19.5682 70.1228 24.961C70.0929 25.0522 70.1869 25.1387 70.276 25.1031C74.8289 23.2811 78.1245 26.6321 78.1245 29.9299" />

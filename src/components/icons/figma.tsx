@@ -1,18 +1,23 @@
 import type { FC } from "react";
 
+import { resolveStrokeIconProps } from "./lucide-props";
 import type { IconProps } from "./type";
 
 export const FigmaIcon: FC<IconProps> = (props) => {
+  const { color, size, strokeWidth, svgProps } = resolveStrokeIconProps(props);
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
+      width={size}
+      height={size}
       fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
+      stroke={color}
+      strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
-      {...props}
+      {...svgProps}
     >
       <path d="M5 5.5A3.5 3.5 0 0 1 8.5 2H12v7H8.5A3.5 3.5 0 0 1 5 5.5z" />
       <path d="M12 2h3.5a3.5 3.5 0 1 1 0 7H12V2z" />
