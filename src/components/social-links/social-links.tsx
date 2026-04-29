@@ -45,7 +45,7 @@ export function SocialLinks({ className, showLabel = true }: SocialLinksProps) {
             rel="noreferrer"
             target="_blank"
           >
-            <Icon className="size-5" />
+            <Icon aria-hidden="true" className="size-5" focusable="false" />
             {showLabel ? <span>{label}</span> : null}
           </a>
         );
