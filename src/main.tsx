@@ -5,10 +5,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import { App } from "./app/app";
-import { applyStoredTheme } from "./features/theme/theme";
-import { ThemeSync } from "./features/theme/theme-sync";
-
-applyStoredTheme();
+import { ThemeSync } from "./features/theme";
 
 const root = document.getElementById("root");
 

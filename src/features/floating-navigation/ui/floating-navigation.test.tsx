@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { Provider } from "jotai";
 import { afterEach, beforeEach, expect, test, vi } from "vite-plus/test";
 
-import { storageKey } from "../../theme/theme";
+import { storageKey } from "../../../lib/constants";
 import { FloatingNavigation } from "./floating-navigation";
 
 beforeEach(() => {
@@ -62,7 +62,7 @@ test("opens the theme panel and reports selected theme", async () => {
   await user.click(screen.getByRole("button", { name: "Theme" }));
   await user.click(screen.getByRole("button", { name: "Dark" }));
 
-  expect(localStorage.getItem(storageKey)).toBe(JSON.stringify("dark"));
+  expect(localStorage.getItem(storageKey.theme)).toBe(JSON.stringify("dark"));
 });
 
 test("closes the panel with Escape", async () => {

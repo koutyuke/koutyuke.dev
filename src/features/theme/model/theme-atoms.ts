@@ -1,17 +1,12 @@
 import { atom } from "jotai";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
 
-import {
-  getSystemTheme,
-  resolveTheme,
-  storageKey,
-  type ResolvedTheme,
-  type ThemeMode,
-} from "./theme";
+import { storageKey } from "../../../lib/constants";
+import { getSystemTheme, resolveTheme, type ResolvedTheme, type ThemeMode } from "../lib/theme";
 
 const themeStorage = createJSONStorage<ThemeMode>(() => localStorage);
 
-export const themeModeAtom = atomWithStorage<ThemeMode>(storageKey, "system", themeStorage, {
+export const themeModeAtom = atomWithStorage<ThemeMode>(storageKey.theme, "system", themeStorage, {
   getOnInit: true,
 });
 

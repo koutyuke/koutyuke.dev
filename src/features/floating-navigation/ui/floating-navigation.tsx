@@ -1,4 +1,4 @@
-import { useTheme } from "../../theme/use-theme";
+import { useTheme } from "../../theme";
 import { useFloatingNavigationPanel } from "../model/use-floating-navigation-panel";
 import { FloatingNavigationUI } from "./floating-navigation.ui";
 import { AboutPanelUI } from "./panels/about-panel";

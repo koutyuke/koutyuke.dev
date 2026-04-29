@@ -45,7 +45,7 @@ global state は必要なものだけ Jotai に置く。
 - system theme: `system-theme-atom`
 - resolved theme: derived atom
 
-現状の実装では `src/features/theme/theme-atoms.ts` に theme state を置き、DOM 反映は `src/features/theme/theme-sync.tsx` に閉じる。
+現状の実装では `src/features/theme/model/theme-atoms.ts` に theme state を置き、DOM 反映は `src/features/theme/ui/theme-sync.tsx` に閉じる。
 
 floating navigation の open / close など局所 UI state は、まず component local state に置く。複数 feature を跨いで共有する必要が出るまで global 化しない。
 

@@ -3,8 +3,10 @@ import { expect, test } from "vite-plus/test";
 import { resolveTheme } from "./theme";
 
 test("resolves explicit light and dark theme modes", () => {
-  expect(resolveTheme("light")).toBe("light");
-  expect(resolveTheme("dark")).toBe("dark");
+  expect(resolveTheme("light", "light")).toBe("light");
+  expect(resolveTheme("light", "dark")).toBe("light");
+  expect(resolveTheme("dark", "light")).toBe("dark");
+  expect(resolveTheme("dark", "dark")).toBe("dark");
 });
 
 test("resolves system theme from the provided system value", () => {

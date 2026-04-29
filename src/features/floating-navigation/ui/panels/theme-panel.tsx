@@ -2,7 +2,7 @@ import { Laptop, type LucideIcon, Moon, Sun } from "lucide-react";
 
 import { AnimatedCheckIcon } from "../../../../components/icons";
 import { PanelFooterAction, PanelItem } from "./parts";
-import type { ThemeMode } from "../../../theme/theme";
+import type { ThemeMode } from "../../../theme";
 
 type ThemeOption = {
   icon: LucideIcon;
