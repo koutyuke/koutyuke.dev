@@ -14,7 +14,6 @@ concurrency:
 
 permissions:
   contents: read
-  deployments: read
   issues: write
   pull-requests: read
 
@@ -39,44 +38,35 @@ jobs:
             const {owner, repo} = context.repo;
             const pullRequest = context.payload.pull_request;
             const headSha = pullRequest.head.sha;
-            const headRef = pullRequest.head.ref;
-            const markerHost = ".pages.dev";
-            const deadline = Date.now() + 20 * 60 * 1000;
+            const issue_number = pullRequest.number;
+            const cloudflareBot = "cloudflare-workers-and-pages";
+            const previewUrlPattern =
+              /<strong>Preview URL:<\/strong><\/td><td>[\s\S]*?<a href=['"]([^'"]+\.pages\.dev)['"]/i;
+            const deadline = Date.now() + 10 * 60 * 1000;
             const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-            async function findPreviewUrl(ref) {
-              const deployments = await github.paginate(github.rest.repos.listDeployments, {
+            async function findPreviewUrlFromCloudflareComment() {
+              const comments = await github.paginate(github.rest.issues.listComments, {
                 owner,
                 repo,
-                ref,
+                issue_number,
                 per_page: 100,
               });
 
-              const sortedDeployments = deployments.sort(
-                (left, right) => new Date(right.created_at) - new Date(left.created_at),
-              );
+              const cloudflareComments = comments
+                .filter((comment) => comment.user.login === cloudflareBot)
+                .sort((left, right) => new Date(right.updated_at) - new Date(left.updated_at));
 
-              for (const deployment of sortedDeployments) {
-                if (deployment.sha !== headSha) {
-                  continue;
-                }
+              for (const comment of cloudflareComments) {
+                const body = comment.body ?? "";
+                const commitMatch = body.match(/<code>([0-9a-f]{7,40})<\/code>/i);
+                const latestCommit = commitMatch?.[1] ?? "";
+                const isCurrentHead = latestCommit && headSha.startsWith(latestCommit);
+                const isSuccessful = body.includes("Deploy successful");
+                const previewUrl = body.match(previewUrlPattern)?.[1] ?? "";
 
-                const statuses = await github.paginate(github.rest.repos.listDeploymentStatuses, {
-                  owner,
-                  repo,
-                  deployment_id: deployment.id,
-                  per_page: 100,
-                });
-
-                const successStatus = statuses
-                  .sort((left, right) => new Date(right.created_at) - new Date(left.created_at))
-                  .find((status) => {
-                    const url = status.environment_url || status.target_url || "";
-                    return status.state === "success" && url.includes(markerHost);
-                  });
-
-                if (successStatus) {
-                  return successStatus.environment_url || successStatus.target_url;
+                if (isCurrentHead && isSuccessful && previewUrl) {
+                  return previewUrl;
                 }
               }
 
@@ -84,7 +74,7 @@ jobs:
             }
 
             while (Date.now() < deadline) {
-              const previewUrl = (await findPreviewUrl(headSha)) || (await findPreviewUrl(headRef));
+              const previewUrl = await findPreviewUrlFromCloudflareComment();
 
               if (previewUrl) {
                 core.info(`Found preview URL: ${previewUrl}`);
@@ -92,11 +82,11 @@ jobs:
                 return;
               }
 
-              core.info("Cloudflare Pages preview URL is not ready yet. Waiting...");
+              core.info("Cloudflare Pages comment is not ready yet. Waiting...");
               await sleep(15 * 1000);
             }
 
-            core.setFailed("Cloudflare Pages preview URL was not found within 20 minutes.");
+            core.setFailed("Cloudflare Pages preview URL comment was not found within 10 minutes.");
 
       - name: Run Lighthouse
         run: |
