@@ -1,0 +1,238 @@
+name: Lighthouse Preview
+
+on:
+  pull_request:
+    types:
+      - opened
+      - ready_for_review
+      - reopened
+      - synchronize
+
+concurrency:
+  group: lighthouse-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  lighthouse:
+    name: Lighthouse preview
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Find Cloudflare Pages preview URL
+        id: preview
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            const pullRequest = context.payload.pull_request;
+            const headSha = pullRequest.head.sha;
+            const issue_number = pullRequest.number;
+            const cloudflareBotLogin = "cloudflare-workers-and-pages[bot]";
+            const previewUrlPattern =
+              /<strong>Preview URL:<\/strong><\/td><td>[\s\S]*?<a href=['"]([^'"]+\.pages\.dev)['"]/i;
+            const deadline = Date.now() + 10 * 60 * 1000;
+            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+            let attempt = 0;
+
+            core.info(`Looking for Cloudflare Pages preview comment on PR #${issue_number}.`);
+            core.info(`Expected head SHA: ${headSha}`);
+            core.info(`Expected bot login: ${cloudflareBotLogin}`);
+
+            function parseCloudflareComment(comment) {
+              const body = comment.body ?? "";
+              const commitMatch = body.match(/<code>([0-9a-f]{7,40})<\/code>/i);
+              const latestCommit = commitMatch?.[1] ?? "";
+
+              return {
+                id: comment.id,
+                updatedAt: comment.updated_at,
+                latestCommit,
+                isCurrentHead: Boolean(latestCommit && headSha.startsWith(latestCommit)),
+                isSuccessful: body.includes("Deploy successful"),
+                previewUrl: body.match(previewUrlPattern)?.[1] ?? "",
+              };
+            }
+
+            function summarizeRecentComments(comments) {
+              return comments
+                .slice(-10)
+                .map((comment) => {
+                  const hasPagesUrl = (comment.body ?? "").includes(".pages.dev");
+                  return [
+                    `id=${comment.id}`,
+                    `author=${comment.user?.login}`,
+                    `updated=${comment.updated_at}`,
+                    `hasPagesUrl=${hasPagesUrl}`,
+                  ].join(" ");
+                })
+                .join("\n");
+            }
+
+            async function findPreviewUrlFromCloudflareComment() {
+              attempt += 1;
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner,
+                repo,
+                issue_number,
+                per_page: 100,
+              });
+
+              core.info(`Attempt ${attempt}: fetched ${comments.length} PR comments.`);
+              const recentCommentSummary = summarizeRecentComments(comments);
+
+              if (recentCommentSummary) {
+                core.info(`Attempt ${attempt}: recent comments:\n${recentCommentSummary}`);
+              }
+
+              const cloudflareComments = comments
+                .filter((comment) => comment.user?.login === cloudflareBotLogin)
+                .sort((left, right) => new Date(right.updated_at) - new Date(left.updated_at));
+
+              core.info(`Attempt ${attempt}: found ${cloudflareComments.length} Cloudflare comments.`);
+
+              for (const comment of cloudflareComments) {
+                const parsed = parseCloudflareComment(comment);
+
+                core.info(
+                  [
+                    `Attempt ${attempt}: inspect Cloudflare comment id=${parsed.id}`,
+                    `updated=${parsed.updatedAt}`,
+                    `latestCommit=${parsed.latestCommit || "(not found)"}`,
+                    `isCurrentHead=${parsed.isCurrentHead}`,
+                    `isSuccessful=${parsed.isSuccessful}`,
+                    `previewUrl=${parsed.previewUrl || "(not found)"}`,
+                  ].join(" "),
+                );
+
+                if (parsed.isCurrentHead && parsed.isSuccessful && parsed.previewUrl) {
+                  return parsed.previewUrl;
+                }
+              }
+
+              return "";
+            }
+
+            while (Date.now() < deadline) {
+              const previewUrl = await findPreviewUrlFromCloudflareComment();
+
+              if (previewUrl) {
+                core.info(`Found preview URL: ${previewUrl}`);
+                core.setOutput("url", previewUrl);
+                return;
+              }
+
+              core.info("Cloudflare Pages comment is not ready yet. Waiting...");
+              await sleep(15 * 1000);
+            }
+
+            core.setFailed("Cloudflare Pages preview URL comment was not found within 10 minutes.");
+
+      - name: Run Lighthouse
+        run: |
+          mkdir -p .tmp/lighthouse
+          npx --yes lighthouse@13.1.0 "${PREVIEW_URL}" \
+            --only-categories=performance,accessibility,best-practices,seo \
+            --output=json \
+            --output=html \
+            --output-path=.tmp/lighthouse/report \
+            --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage"
+        env:
+          PREVIEW_URL: ${{ steps.preview.outputs.url }}
+
+      - name: Upload Lighthouse report
+        id: upload-report
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report-${{ github.event.pull_request.number }}
+          path: .tmp/lighthouse/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Comment Lighthouse score
+        uses: actions/github-script@v7
+        env:
+          ARTIFACT_URL: ${{ steps.upload-report.outputs.artifact-url }}
+          PREVIEW_URL: ${{ steps.preview.outputs.url }}
+        with:
+          script: |
+            const fs = require("node:fs");
+            const {owner, repo} = context.repo;
+            const issue_number = context.payload.pull_request.number;
+            const report = JSON.parse(
+              fs.readFileSync(".tmp/lighthouse/report.report.json", "utf8"),
+            );
+            const marker = "<!-- lighthouse-preview-report -->";
+            const score = (category) => Math.round(report.categories[category].score * 100);
+            const displayValue = (auditId) => report.audits[auditId]?.displayValue ?? "n/a";
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            const artifactUrl = process.env.ARTIFACT_URL;
+
+            const summary = [
+              "## Lighthouse Preview",
+              "",
+              `Target: ${process.env.PREVIEW_URL}`,
+              "",
+              "| Category | Score |",
+              "| --- | ---: |",
+              `| Performance | ${score("performance")} |`,
+              `| Accessibility | ${score("accessibility")} |`,
+              `| Best Practices | ${score("best-practices")} |`,
+              `| SEO | ${score("seo")} |`,
+              "",
+              "| Metric | Value |",
+              "| --- | ---: |",
+              `| First Contentful Paint | ${displayValue("first-contentful-paint")} |`,
+              `| Largest Contentful Paint | ${displayValue("largest-contentful-paint")} |`,
+              `| Total Blocking Time | ${displayValue("total-blocking-time")} |`,
+              `| Cumulative Layout Shift | ${displayValue("cumulative-layout-shift")} |`,
+              `| Speed Index | ${displayValue("speed-index")} |`,
+              "",
+              `[Lighthouse report artifact](${artifactUrl})`,
+              `[Workflow run](${runUrl})`,
+            ].join("\n");
+
+            const body = [
+              marker,
+              summary,
+            ].join("\n");
+
+            await fs.promises.appendFile(process.env.GITHUB_STEP_SUMMARY, `${summary}\n`);
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number,
+              per_page: 100,
+            });
+
+            const existingComment = comments.find((comment) => {
+              return comment.user?.type === "Bot" && comment.body.includes(marker);
+            });
+
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existingComment.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body,
+              });
+            }
