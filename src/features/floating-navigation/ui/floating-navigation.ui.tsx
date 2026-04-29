@@ -27,17 +27,20 @@ export const FloatingNavigationUI = ({
   const panelId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-  const wasOpenRef = useRef(false);
+  const prevViewRef = useRef<FloatingNavigationView>("closed");
 
   // Move focus into the panel when it opens; restore to the trigger when it closes.
   useEffect(() => {
+    const prevView = prevViewRef.current;
     const open = isOpen(view);
-    if (open && !wasOpenRef.current) {
+    const prevOpen = isOpen(prevView);
+
+    if (open && view !== prevView) {
       panelRef.current?.focus();
-    } else if (!open && wasOpenRef.current) {
+    } else if (!open && prevOpen) {
       triggerRef.current?.focus();
     }
-    wasOpenRef.current = open;
+    prevViewRef.current = view;
   }, [view]);
 
   return (

@@ -65,6 +65,23 @@ test("opens the theme panel and reports selected theme", async () => {
   expect(localStorage.getItem(storageKey.theme)).toBe(JSON.stringify("dark"));
 });
 
+test("moves focus into the active panel when switching panels", async () => {
+  const user = userEvent.setup();
+
+  renderFloatingNavigation();
+
+  await user.click(screen.getByRole("button", { name: "Open navigation" }));
+  await waitFor(() => {
+    expect(document.activeElement).toBe(screen.getByRole("dialog", { name: "Navigation menu" }));
+  });
+
+  await user.click(screen.getByRole("button", { name: "Theme" }));
+
+  await waitFor(() => {
+    expect(document.activeElement).toBe(screen.getByRole("dialog", { name: "Theme settings" }));
+  });
+});
+
 test("closes the panel with Escape", async () => {
   const user = userEvent.setup();
 
