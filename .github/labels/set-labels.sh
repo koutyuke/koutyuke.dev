@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-FILE="${1:-labels.json}"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+FILE="${1:-"$SCRIPT_DIR/labels.json"}"
 
 jq -c '.[]' "$FILE" | while read -r l; do
   name=$(echo "$l" | jq -r '.name')
@@ -16,5 +17,6 @@ jq -c '.[]' "$FILE" | while read -r l; do
     continue
   fi
 
-  gh label create "$name" --color "$color" --description "$desc"
+  gh label create "$name" --color "$color" --description "$desc" ||
+    gh label edit "$name" --color "$color" --description "$desc"
 done
