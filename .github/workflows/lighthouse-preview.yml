@@ -72,7 +72,7 @@ jobs:
                   const hasPagesUrl = (comment.body ?? "").includes(".pages.dev");
                   return [
                     `id=${comment.id}`,
-                    `author=${comment.user.login}`,
+                    `author=${comment.user?.login}`,
                     `updated=${comment.updated_at}`,
                     `hasPagesUrl=${hasPagesUrl}`,
                   ].join(" ");
@@ -97,7 +97,7 @@ jobs:
               }
 
               const cloudflareComments = comments
-                .filter((comment) => comment.user.login === cloudflareBotLogin)
+                .filter((comment) => comment.user?.login === cloudflareBotLogin)
                 .sort((left, right) => new Date(right.updated_at) - new Date(left.updated_at));
 
               core.info(`Attempt ${attempt}: found ${cloudflareComments.length} Cloudflare comments.`);
@@ -145,28 +145,41 @@ jobs:
           npx --yes lighthouse@13.1.0 "${PREVIEW_URL}" \
             --only-categories=performance,accessibility,best-practices,seo \
             --output=json \
-            --output-path=.tmp/lighthouse/report.json \
+            --output=html \
+            --output-path=.tmp/lighthouse/report \
             --chrome-flags="--headless=new --no-sandbox --disable-dev-shm-usage"
         env:
           PREVIEW_URL: ${{ steps.preview.outputs.url }}
 
+      - name: Upload Lighthouse report
+        id: upload-report
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report-${{ github.event.pull_request.number }}
+          path: .tmp/lighthouse/
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Comment Lighthouse score
         uses: actions/github-script@v7
         env:
+          ARTIFACT_URL: ${{ steps.upload-report.outputs.artifact-url }}
           PREVIEW_URL: ${{ steps.preview.outputs.url }}
         with:
           script: |
             const fs = require("node:fs");
             const {owner, repo} = context.repo;
             const issue_number = context.payload.pull_request.number;
-            const report = JSON.parse(fs.readFileSync(".tmp/lighthouse/report.json", "utf8"));
+            const report = JSON.parse(
+              fs.readFileSync(".tmp/lighthouse/report.report.json", "utf8"),
+            );
             const marker = "<!-- lighthouse-preview-report -->";
             const score = (category) => Math.round(report.categories[category].score * 100);
             const displayValue = (auditId) => report.audits[auditId]?.displayValue ?? "n/a";
             const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            const artifactUrl = process.env.ARTIFACT_URL;
 
-            const body = [
-              marker,
+            const summary = [
               "## Lighthouse Preview",
               "",
               `Target: ${process.env.PREVIEW_URL}`,
@@ -186,8 +199,16 @@ jobs:
               `| Cumulative Layout Shift | ${displayValue("cumulative-layout-shift")} |`,
               `| Speed Index | ${displayValue("speed-index")} |`,
               "",
+              `[Lighthouse report artifact](${artifactUrl})`,
               `[Workflow run](${runUrl})`,
             ].join("\n");
+
+            const body = [
+              marker,
+              summary,
+            ].join("\n");
+
+            await fs.promises.appendFile(process.env.GITHUB_STEP_SUMMARY, `${summary}\n`);
 
             const comments = await github.paginate(github.rest.issues.listComments, {
               owner,
@@ -197,7 +218,7 @@ jobs:
             });
 
             const existingComment = comments.find((comment) => {
-              return comment.user.type === "Bot" && comment.body.includes(marker);
+              return comment.user?.type === "Bot" && comment.body.includes(marker);
             });
 
             if (existingComment) {
