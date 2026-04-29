@@ -113,14 +113,14 @@ export const footprints = [
       "Growthersのメンバーとして技育展に参加し、LT運営支援システムenshitaのフロントエンドを担当",
   },
   {
-    date: "Mar 2022",
-    title: "GrowthersにJoin",
-    description: "高専生による開発コミュニティGrowthersに参加し、公式ブログサイト制作にも参加",
-  },
-  {
     date: "Aug 2022",
     title: "ROSを使ったロボット制御",
     description: "NHK2022に向けてROSを用いた制御コードを作成し、マルチマイコン化を実現",
+  },
+  {
+    date: "Mar 2022",
+    title: "GrowthersにJoin",
+    description: "高専生による開発コミュニティGrowthersに参加し、公式ブログサイト制作にも参加",
   },
   {
     date: "Sep 2021",
