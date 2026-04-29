@@ -2,19 +2,20 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
 
+const checkIgnorePatterns = [
+  ".*/**",
+  "!.github/**",
+  "!.storybook/**",
+  "!.vscode/**",
+  "**/dist/**",
+  "**/storybook-static/**",
+];
+
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     watch: {
-      ignored: [
-        "**/.direnv/**",
-        "**/.playwright-mcp/**",
-        "**/.serena/**",
-        "**/.tmp/**",
-        "**/.vite-hooks/**",
-        "**/dist/**",
-        "**/storybook-static/**",
-      ],
+      ignored: [/(^|[/\\])\../, "**/dist/**", "**/storybook-static/**"],
     },
   },
   staged: {
@@ -22,15 +23,7 @@ export default defineConfig({
     "*.css": "vp run css:lint:fix",
   },
   fmt: {
-    ignorePatterns: [
-      ".direnv/**",
-      ".playwright-mcp/**",
-      ".serena/**",
-      ".tmp/**",
-      ".vite-hooks/**",
-      "dist/**",
-      "storybook-static/**",
-    ],
+    ignorePatterns: checkIgnorePatterns,
     insertFinalNewline: true,
     printWidth: 100,
     proseWrap: "preserve",
@@ -71,15 +64,7 @@ export default defineConfig({
       es2024: true,
     },
     plugins: ["typescript", "react", "import", "unicorn"],
-    ignorePatterns: [
-      ".direnv/**",
-      ".playwright-mcp/**",
-      ".serena/**",
-      ".tmp/**",
-      ".vite-hooks/**",
-      "dist/**",
-      "storybook-static/**",
-    ],
+    ignorePatterns: checkIgnorePatterns,
     categories: {
       correctness: "error",
       suspicious: "warn",
@@ -101,11 +86,10 @@ export default defineConfig({
   },
   test: {
     exclude: [
-      "**/.direnv/**",
-      "**/.playwright-mcp/**",
-      "**/.serena/**",
-      "**/.tmp/**",
-      "**/.vite-hooks/**",
+      "**/.*/**",
+      "!**/.github/**",
+      "!**/.storybook/**",
+      "!**/.vscode/**",
       "**/dist/**",
       "**/storybook-static/**",
       "**/node_modules/**",
