@@ -15,7 +15,7 @@ Vite+ を中心に、React、Tailwind CSS、Radix Colors、Motion.dev、Jotai �
 - State: Jotai
 - Format / lint: Oxfmt / Oxlint / Stylelint
 - Component catalog: Storybook
-- Deploy: Void / Cloudflare
+- Deploy: Cloudflare Pages
 - Environment: Nix + direnv
 
 ## 開発

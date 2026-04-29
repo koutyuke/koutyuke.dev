@@ -114,7 +114,7 @@ content は component に直接埋め込まない。section copy は `content/` 
 
 local build は `vp build`。CI も同じ command を使う。
 
-deploy は `vp run deploy` から `void deploy` を呼ぶ。Void が利用できない場合だけ Wrangler を fallback として検討するが、default path にはしない。
+deploy は Cloudflare Pages の Git integration を使う。Cloudflare Pages 側の build command は `vp build`、build output directory は `dist` にする。
 
 ## Naming
 

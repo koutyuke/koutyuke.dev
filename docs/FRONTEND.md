@@ -18,6 +18,8 @@ vp build
 
 `pnpm`, `vite`, `vitest`, `oxlint`, `oxfmt` を直接主導線にしない。Vite+ が持っている機能は Vite+ から使う。
 
+deploy は Cloudflare Pages の Git integration に委譲する。Cloudflare Pages 側では build command を `vp build`、build output directory を `dist` に設定する。
+
 ## TypeScript
 
 `tsconfig.json` は `@tsconfig/strictest` と `@tsconfig/node24` を基礎にする。

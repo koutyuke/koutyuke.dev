@@ -18,7 +18,7 @@
 - Figma: [../.koutyuke/figma-design.md](../.koutyuke/figma-design.md)
 - 旧プロジェクト: `/Users/kousuke/Desktop/projects/koutyuke/old-koutyuke.dev`
 - Vite+: <https://viteplus.dev/>
-- Void: <https://void.cloud/>
+- Cloudflare Pages: <https://developers.cloudflare.com/pages/>
 
 ## ドキュメントの扱い
 
