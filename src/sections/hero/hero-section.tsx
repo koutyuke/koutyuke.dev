@@ -16,7 +16,7 @@ export function HeroSection() {
           Hello, Nice to meet you!
         </p>
 
-        <div className="color-slate-12 mb-2 size-18">
+        <div className="mb-2 size-18 text-slate-12">
           <KoutyukeIcon className="size-full" />
         </div>
 
