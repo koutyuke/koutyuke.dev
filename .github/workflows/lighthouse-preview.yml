@@ -44,8 +44,14 @@ jobs:
               /<strong>Preview URL:<\/strong><\/td><td>[\s\S]*?<a href=['"]([^'"]+\.pages\.dev)['"]/i;
             const deadline = Date.now() + 10 * 60 * 1000;
             const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+            let attempt = 0;
+
+            core.info(`Looking for Cloudflare Pages preview comment on PR #${issue_number}.`);
+            core.info(`Expected head SHA: ${headSha}`);
+            core.info(`Expected bot login: ${cloudflareBot}`);
 
             async function findPreviewUrlFromCloudflareComment() {
+              attempt += 1;
               const comments = await github.paginate(github.rest.issues.listComments, {
                 owner,
                 repo,
@@ -53,9 +59,29 @@ jobs:
                 per_page: 100,
               });
 
+              core.info(`Attempt ${attempt}: fetched ${comments.length} PR comments.`);
+              const recentCommentSummary = comments
+                .slice(-10)
+                .map((comment) => {
+                  const hasPagesUrl = (comment.body ?? "").includes(".pages.dev");
+                  return [
+                    `id=${comment.id}`,
+                    `author=${comment.user.login}`,
+                    `updated=${comment.updated_at}`,
+                    `hasPagesUrl=${hasPagesUrl}`,
+                  ].join(" ");
+                })
+                .join("\n");
+
+              if (recentCommentSummary) {
+                core.info(`Attempt ${attempt}: recent comments:\n${recentCommentSummary}`);
+              }
+
               const cloudflareComments = comments
                 .filter((comment) => comment.user.login === cloudflareBot)
                 .sort((left, right) => new Date(right.updated_at) - new Date(left.updated_at));
+
+              core.info(`Attempt ${attempt}: found ${cloudflareComments.length} Cloudflare comments.`);
 
               for (const comment of cloudflareComments) {
                 const body = comment.body ?? "";
@@ -64,6 +90,17 @@ jobs:
                 const isCurrentHead = latestCommit && headSha.startsWith(latestCommit);
                 const isSuccessful = body.includes("Deploy successful");
                 const previewUrl = body.match(previewUrlPattern)?.[1] ?? "";
+
+                core.info(
+                  [
+                    `Attempt ${attempt}: inspect Cloudflare comment id=${comment.id}`,
+                    `updated=${comment.updated_at}`,
+                    `latestCommit=${latestCommit || "(not found)"}`,
+                    `isCurrentHead=${Boolean(isCurrentHead)}`,
+                    `isSuccessful=${isSuccessful}`,
+                    `previewUrl=${previewUrl || "(not found)"}`,
+                  ].join(" "),
+                );
 
                 if (isCurrentHead && isSuccessful && previewUrl) {
                   return previewUrl;
