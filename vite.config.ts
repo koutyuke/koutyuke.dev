@@ -18,7 +18,7 @@ export default defineConfig({
     },
   },
   staged: {
-    "*.{ts,tsx,js,jsx,json,css,html,md}": "vp check --fix",
+    "*.{ts,tsx,js,jsx,json,css,html,md}": "vp check --fix types/staged-env.d.ts",
     "*.css": "vp run css:lint:fix",
   },
   fmt: {

@@ -1,10 +1,10 @@
-// oxlint-disable-next-line import/no-unassigned-import -- side-effect global styles
+// oxlint-disable-next-line import/no-unassigned-import -- global style の副作用 import
 import "../src/styles/global.css";
 
 import React from "react";
 import type { Preview } from "@storybook/react-vite";
 
-import { ThemeSync } from "../src/features/theme/theme-sync";
+import { ThemeSync } from "../src/features/theme";
 
 const preview: Preview = {
   decorators: [

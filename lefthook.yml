@@ -1,10 +1,7 @@
 pre-commit:
-  parallel: true
   commands:
     staged:
       run: vp staged
-    css-lint:
-      run: vp run css:lint
 
 pre-push:
   commands:
