@@ -26,7 +26,7 @@
 - dev server: `vp dev`
 - format / lint / type-check: `vp check`
 - test: `vp test`
-- Storybook build: `vp run storybook`
+- Storybook build: `vp run sb:build`
 - production build: `vp build`
 - CSS lint: `vp run css:lint`
 - deploy: `vp run deploy`
