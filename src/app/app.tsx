@@ -1,20 +1,10 @@
-import { FloatingNavigation } from "../features/floating-navigation";
-import { AboutSection } from "../sections/about/about-section";
-import { ContactSection } from "../sections/contact/contact-section";
-import { FooterSection } from "../sections/footer/footer-section";
-import { FootprintsSection } from "../sections/footprints/footprints-section";
-import { HeroSection } from "../sections/hero/hero-section";
+import { HomePage } from "../pages/home";
+import { FloatingNavigation } from "../widgets/floating-navigation";
 
 export function App() {
   return (
     <>
-      <main>
-        <HeroSection />
-        <AboutSection />
-        <FootprintsSection />
-        <ContactSection />
-      </main>
-      <FooterSection />
+      <HomePage />
       <FloatingNavigation />
     </>
   );
