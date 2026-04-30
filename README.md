@@ -1,26 +1,63 @@
-# koutyuke.dev
+<div align="center">
 
-`koutyuke.dev` は、1 ページで自分の輪郭を伝えるための personal portfolio site です。
+  <h1><img src="https://raw.githubusercontent.com/koutyuke/koutyuke/main/icons/icon.svg" width="32" align="center" alt="My Icon" /> koutyuke.dev</h1>
 
-Vite+ を中心に、React、Tailwind CSS、Radix Colors、Motion.dev、Jotai を組み合わせます。見た目は Figma を起点にしつつ、実装は component と state を薄く保ち、floating navigation と theme switching を気持ちよく動かすことを重視します。
+  <p>
+    1 page personal portfolio for showing who I am, what I build, and where to find me.
+  </p>
 
-## スタック
+  <p>
+    <a href="https://koutyuke.dev"><strong>koutyuke.dev</strong></a>
+    &nbsp;&bull;&nbsp;
+    <a href="./docs/README.md">Docs</a>
+    &nbsp;&bull;&nbsp;
+    <a href="./LICENSE">License</a>
+  </p>
 
-- Toolchain: Vite+ (`vp`)
-- Runtime: Node.js v24
-- Package manager: pnpm
-- UI: React
-- Styling: Tailwind CSS v4 + `@radix-ui/colors`
-- Motion: Motion.dev
-- State: Jotai
-- Format / lint: Oxfmt / Oxlint / Stylelint
-- Component catalog: Storybook
-- Deploy: Cloudflare Pages
-- Environment: Nix + direnv
+  <p>
+    <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-111111?style=flat" alt="MIT License"></a>
+    <img src="https://img.shields.io/badge/React-19-61dafb?style=flat&logo=react&logoColor=111111" alt="React 19">
+    <img src="https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?style=flat&logo=tailwindcss&logoColor=ffffff" alt="Tailwind CSS v4">
+    <img src="https://img.shields.io/badge/Vite+-toolchain-646cff?style=flat&logo=vite&logoColor=ffffff" alt="Vite+">
+  </p>
 
-## 開発
+</div>
 
-`vp` は現時点では Nix 管理せず、各自の環境に install します。
+## About
+
+`koutyuke.dev` is a one-page personal portfolio site for presenting the shape of `koutyuke`.
+
+The UI is built around React components, styled with Tailwind CSS v4 and Radix Colors, and animated with Motion.dev. The floating navigation expands from a button into a menu with continuous motion. Theme switching supports `system | light | dark`, with state managed by Jotai and DOM synchronization isolated in `theme-sync.tsx`.
+
+## Highlights
+
+| Area                    | Detail                                                                 |
+| :---------------------- | :--------------------------------------------------------------------- |
+| **Single Page**         | Collects hero, about, footprints, contact, and footer into one page    |
+| **Floating Navigation** | Navigation that smoothly expands from a button into a menu             |
+| **Theme Switching**     | Supports `system \| light \| dark` and follows OS preferences          |
+| **Component First**     | Keeps UI reviewable through React components and Storybook             |
+| **Strict Tooling**      | Runs TypeScript strict, Oxlint, Oxfmt, Stylelint, and Vitest via Vite+ |
+
+## Stack
+
+| Layer           | Tools                                                    |
+| :-------------- | :------------------------------------------------------- |
+| Toolchain       | Vite+ (`vp`)                                             |
+| Runtime         | Node.js v24                                              |
+| Package manager | pnpm                                                     |
+| UI              | React                                                    |
+| Styling         | Tailwind CSS v4, `@radix-ui/colors`, `the-new-css-reset` |
+| Motion          | Motion.dev                                               |
+| State           | Jotai                                                    |
+| Test / Catalog  | Vitest, Storybook                                        |
+| Quality         | Oxfmt, Oxlint, Stylelint, Lefthook                       |
+| Environment     | Nix, direnv                                              |
+| Deploy          | Cloudflare Pages                                         |
+
+## Quick Start
+
+`node`, `pnpm`, `git`, and `nixfmt-rfc-style` are provided by the Nix shell. `vp` is not managed by Nix yet, so install it with the official installer.
 
 ```sh
 curl -fsSL https://vite.plus | bash
@@ -29,20 +66,45 @@ vp install
 vp dev
 ```
 
-検証は Vite+ に集約します。
+## Commands
 
-```sh
-vp check
-vp test
-vp run css:lint
-vp run storybook
-vp build
+Daily development tasks are routed through Vite+.
+
+| Command            | Description                       |
+| :----------------- | :-------------------------------- |
+| `vp dev`           | Start the development server      |
+| `vp check`         | Run format, lint, and type checks |
+| `vp test`          | Run tests                         |
+| `vp run css:lint`  | Lint CSS with Stylelint           |
+| `vp run storybook` | Build Storybook for production    |
+| `vp build`         | Create a production build         |
+| `vp run deploy`    | Deploy to Cloudflare Pages        |
+
+## Project Map
+
+```text
+src/
+├── app/                         # application shell
+├── components/                  # shared presentational components
+├── content/                     # profile and footprint content
+├── features/
+│   ├── floating-navigation/     # navigation state, motion, panels
+│   └── theme/                   # theme state and DOM sync
+├── lib/                         # small shared utilities
+├── sections/                    # page sections
+└── styles/                      # global CSS and Tailwind theme
 ```
 
-## ドキュメント
+## Documentation
 
-- [docs/README.md](./docs/README.md): ドキュメントの入口
-- [docs/DESIGN.md](./docs/DESIGN.md): ビジュアル、motion、theme の方針
-- [docs/FRONTEND.md](./docs/FRONTEND.md): frontend 実装と toolchain
-- [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md): 構成、責務、data flow、coding rules
-- [docs/presentational-container-pattern.md](./docs/presentational-container-pattern.md): Presenter / Container Pattern の責務、依存方向、フォーム設計指針
+| Document                                                                               | Description                                                        |
+| :------------------------------------------------------------------------------------- | :----------------------------------------------------------------- |
+| [docs/README.md](./docs/README.md)                                                     | Documentation index                                                |
+| [docs/DESIGN.md](./docs/DESIGN.md)                                                     | Visual design, theme, motion, and accessibility principles         |
+| [docs/FRONTEND.md](./docs/FRONTEND.md)                                                 | Frontend implementation and toolchain notes                        |
+| [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)                                         | Directory structure, data flow, and coding rules                   |
+| [docs/presentational-container-pattern.md](./docs/presentational-container-pattern.md) | Presenter / Container Pattern responsibilities and dependency flow |
+
+## License
+
+MIT License. See [LICENSE](./LICENSE) for details.
