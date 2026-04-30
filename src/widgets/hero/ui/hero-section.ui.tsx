@@ -1,15 +1,9 @@
 import { ChevronDown } from "lucide-react";
-import type { ReactNode } from "react";
 
+import { SocialLinks } from "../../../entities/profile";
 import { AsteriskIcon, KoutyukeIcon } from "../../../shared/ui/icons";
 
-type HeroSectionUIProps = {
-  slots: {
-    SocialLinks: ReactNode;
-  };
-};
-
-export function HeroSectionUI({ slots: { SocialLinks } }: HeroSectionUIProps) {
+export function HeroSectionUI() {
   return (
     <section
       aria-labelledby="hero-title"
@@ -50,7 +44,7 @@ export function HeroSectionUI({ slots: { SocialLinks } }: HeroSectionUIProps) {
           </p>
         </div>
 
-        {SocialLinks}
+        <SocialLinks className="justify-start" showLabel={false} />
       </div>
 
       <a

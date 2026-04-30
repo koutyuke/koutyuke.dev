@@ -94,10 +94,11 @@ vp run storybook
 ```
 
 story は component の近くに置く。
+ただし `app` layer は application-wide configuration と shell の責務なので、Storybook は置かない。
 
 ```text
-src/app/app.tsx
-src/app/app.stories.tsx
+src/widgets/hero/ui/hero-section.ui.tsx
+src/widgets/hero/ui/hero-section.stories.tsx
 ```
 
 ## Test

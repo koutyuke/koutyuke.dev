@@ -1,14 +1,7 @@
-import type { ReactNode } from "react";
-
+import { SocialLinks } from "../../../entities/profile";
 import { SectionDivider } from "../../../shared/ui/section-divider";
 
-type ContactSectionUIProps = {
-  slots: {
-    SocialLinks: ReactNode;
-  };
-};
-
-export function ContactSectionUI({ slots: { SocialLinks } }: ContactSectionUIProps) {
+export function ContactSectionUI() {
   return (
     <section
       aria-labelledby="contact-title"
@@ -32,7 +25,7 @@ export function ContactSectionUI({ slots: { SocialLinks } }: ContactSectionUIPro
           <p className="text-center text-xs font-medium text-slate-10">
             気軽にのぞいたり、声をかけたり
           </p>
-          {SocialLinks}
+          <SocialLinks />
         </div>
 
         <SectionDivider />

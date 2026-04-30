@@ -35,7 +35,6 @@ src/
   main.tsx
   app/
     app.tsx
-    app.stories.tsx
     styles/
       global.css
   pages/
@@ -43,6 +42,8 @@ src/
       index.ts
       ui/
         home-page.tsx
+        home-page.ui.tsx
+        home-page.stories.tsx
   widgets/
     hero/
       index.ts
@@ -212,6 +213,7 @@ import type { ZodSchema } from "zod";
 
 - component を追加したら、意味のある単位で story を追加する。
 - story file は component の近くに置く。
+- `app` layer には Storybook を置かない。UI の catalog は `shared` / `entities` / `widgets` / `features` / `pages` で行う。
 - `widgets/*` は Presenter を中心に story を作る。
 - visual variation、theme variation、主要 interaction を catalog 化する。
 

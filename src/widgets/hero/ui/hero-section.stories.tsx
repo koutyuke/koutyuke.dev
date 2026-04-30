@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { SocialLinks } from "../../../entities/profile";
 import { HeroSectionUI } from "./hero-section.ui";
 
 const meta = {
@@ -15,10 +14,4 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
-  args: {
-    slots: {
-      SocialLinks: <SocialLinks className="justify-start" showLabel={false} />,
-    },
-  },
-};
+export const Default: Story = {};
