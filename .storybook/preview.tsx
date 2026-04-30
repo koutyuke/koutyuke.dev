@@ -1,5 +1,5 @@
 // oxlint-disable-next-line import/no-unassigned-import -- global style の副作用 import
-import "../src/styles/global.css";
+import "../src/app/styles/global.css";
 
 import React from "react";
 import type { Preview } from "@storybook/react-vite";
