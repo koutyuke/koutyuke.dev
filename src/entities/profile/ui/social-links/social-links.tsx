@@ -1,6 +1,6 @@
-import { links } from "../../content/profile";
-import { cn } from "../../lib/cn";
-import { GithubIcon, TwitterIcon, ZennIcon } from "../icons";
+import { cn } from "../../../../shared/lib";
+import { GithubIcon, TwitterIcon, ZennIcon } from "../../../../shared/ui/icons";
+import { links } from "../../model/profile";
 
 type SocialLinksProps = {
   className?: string;

@@ -4,7 +4,7 @@ import { SocialLinks } from "./social-links";
 
 const meta = {
   component: SocialLinks,
-  title: "Components/SocialLinks",
+  title: "Entities/Profile/SocialLinks",
 } satisfies Meta<typeof SocialLinks>;
 
 export default meta;
