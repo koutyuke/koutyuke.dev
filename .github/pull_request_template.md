@@ -14,6 +14,12 @@
 -
 -
 
+## Related Issue
+
+<!-- 関連するIssueを列強する -->
+
+- closed #
+
 ## Impact Area
 
 <!-- 影響しそうな機能、画面、API、DBなどを書く -->
