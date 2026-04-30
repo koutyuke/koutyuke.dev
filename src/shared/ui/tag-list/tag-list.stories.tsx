@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { techStacks } from "../../content/profile";
+import { techStacks } from "../../../entities/profile";
 import { TagList } from "./tag-list";
 
 const meta = {
   component: TagList,
-  title: "Components/TagList",
+  title: "Shared/TagList",
 } satisfies Meta<typeof TagList>;
 
 export default meta;
