@@ -1,23 +1,52 @@
+import { fn } from "storybook/test";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { FloatingNavigation } from "./floating-navigation";
+import { FloatingNavigationUI } from "./floating-navigation.ui";
 
 const meta = {
-  component: FloatingNavigation,
+  component: FloatingNavigationUI,
   parameters: {
     layout: "fullscreen",
   },
-  title: "Features/FloatingNavigation",
-} satisfies Meta<typeof FloatingNavigation>;
+  title: "Widgets/FloatingNavigation",
+} satisfies Meta<typeof FloatingNavigationUI>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Interactive: Story = {
-  render: () => (
-    <div className="min-h-128 bg-slate-1">
-      <FloatingNavigation />
-    </div>
-  ),
+const actions = {
+  onThemeChange: fn(),
+};
+
+export const Closed: Story = {
+  args: {
+    actions,
+    initialView: "closed",
+    theme: "system",
+  },
+};
+
+export const Menu: Story = {
+  args: {
+    actions,
+    initialView: "menu",
+    theme: "system",
+  },
+};
+
+export const About: Story = {
+  args: {
+    actions,
+    initialView: "about",
+    theme: "system",
+  },
+};
+
+export const Theme: Story = {
+  args: {
+    actions,
+    initialView: "theme",
+    theme: "system",
+  },
 };

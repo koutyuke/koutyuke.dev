@@ -1,33 +1,42 @@
 import { MenuIcon } from "lucide-react";
 import { motion } from "motion/react";
-import { useEffect, useId, useRef, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 
 import { cn } from "../../../shared/lib";
-import { isOpen, type FloatingNavigationView } from "../model/panel-state";
+import { AboutPanelUI } from "./panels/about-panel.ui";
+import { MenuPanelUI } from "./panels/menu-panel.ui";
+import { ThemePanelUI } from "./panels/theme-panel.ui";
+import type { ThemeMode } from "../../../features/theme";
+
+type FloatingNavigationView = "about" | "closed" | "menu" | "theme";
+
+function isOpen(view: FloatingNavigationView) {
+  return view !== "closed";
+}
 
 type FloatingNavigationUIProps = {
-  view: FloatingNavigationView;
-
   actions: {
-    onClose: () => void;
-    onOpenMenu: () => void;
+    onThemeChange: (theme: ThemeMode) => void;
   };
-  slots: {
-    MenuPanel: ReactNode;
-    AboutPanel: ReactNode;
-    ThemePanel: ReactNode;
-  };
+  initialView?: FloatingNavigationView;
+  theme: ThemeMode;
 };
 
 export const FloatingNavigationUI = ({
-  view,
-  actions: { onClose, onOpenMenu },
-  slots: { AboutPanel, MenuPanel, ThemePanel },
+  actions: { onThemeChange },
+  initialView = "closed",
+  theme,
 }: FloatingNavigationUIProps) => {
+  const [view, setView] = useState<FloatingNavigationView>(initialView);
   const panelId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const prevViewRef = useRef<FloatingNavigationView>("closed");
+
+  const handleClose = useCallback(() => setView("closed"), []);
+  const handleOpenMenu = useCallback(() => setView("menu"), []);
+  const handleOpenAbout = useCallback(() => setView("about"), []);
+  const handleOpenTheme = useCallback(() => setView("theme"), []);
 
   // Move focus into the panel when it opens; restore to the trigger when it closes.
   useEffect(() => {
@@ -43,9 +52,21 @@ export const FloatingNavigationUI = ({
     prevViewRef.current = view;
   }, [view]);
 
+  const handlePanelKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === "Escape") {
+        event.stopPropagation();
+        handleClose();
+      }
+    },
+    [handleClose],
+  );
+
   return (
     <>
-      {isOpen(view) && <div aria-hidden="true" className="fixed inset-0 z-40" onClick={onClose} />}
+      {isOpen(view) && (
+        <div aria-hidden="true" className="fixed inset-0 z-40" onClick={handleClose} />
+      )}
       <div className="dark pointer-events-none fixed right-0 bottom-8 left-0 z-50 flex w-screen items-end justify-center">
         <div
           className={cn(
@@ -79,6 +100,7 @@ export const FloatingNavigationUI = ({
               aria-label={"Navigation menu"}
               tabIndex={-1}
               className="flex h-102 w-60 flex-col items-start p-2 outline-none"
+              onKeyDown={handlePanelKeyDown}
               initial={{ opacity: 0, filter: "blur(10px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
               transition={{
@@ -86,7 +108,13 @@ export const FloatingNavigationUI = ({
                 duration: 0.3,
               }}
             >
-              {MenuPanel}
+              <MenuPanelUI
+                actions={{
+                  onClose: handleClose,
+                  onOpenAbout: handleOpenAbout,
+                  onOpenTheme: handleOpenTheme,
+                }}
+              />
             </motion.div>
           )}
           {view === "about" && (
@@ -99,6 +127,7 @@ export const FloatingNavigationUI = ({
               aria-label={"About"}
               tabIndex={-1}
               className="flex h-74 w-80 flex-col items-start p-2 outline-none"
+              onKeyDown={handlePanelKeyDown}
               initial={{ opacity: 0, filter: "blur(10px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
               transition={{
@@ -106,7 +135,7 @@ export const FloatingNavigationUI = ({
                 duration: 0.3,
               }}
             >
-              {AboutPanel}
+              <AboutPanelUI actions={{ onBack: handleOpenMenu }} />
             </motion.div>
           )}
           {view === "theme" && (
@@ -119,6 +148,7 @@ export const FloatingNavigationUI = ({
               aria-label={"Theme settings"}
               tabIndex={-1}
               className="flex h-45 w-60 flex-col items-start p-2 outline-none"
+              onKeyDown={handlePanelKeyDown}
               initial={{ opacity: 0, filter: "blur(10px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
               transition={{
@@ -126,7 +156,7 @@ export const FloatingNavigationUI = ({
                 duration: 0.3,
               }}
             >
-              {ThemePanel}
+              <ThemePanelUI actions={{ onBack: handleOpenMenu, onThemeChange }} theme={theme} />
             </motion.div>
           )}
           {view === "closed" && (
@@ -145,7 +175,7 @@ export const FloatingNavigationUI = ({
                 ease: "easeIn",
                 duration: 0.3,
               }}
-              onClick={onOpenMenu}
+              onClick={handleOpenMenu}
             >
               <MenuIcon aria-hidden="true" className="size-6 text-slate-12" />
             </motion.button>
