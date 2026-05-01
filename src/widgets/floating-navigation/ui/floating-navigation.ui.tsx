@@ -10,6 +10,22 @@ import type { ThemeMode } from "../../../features/theme";
 
 type FloatingNavigationView = "about" | "closed" | "menu" | "theme";
 
+const focusableSelector = [
+  "a[href]",
+  "button:not([disabled])",
+  "input:not([disabled])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  '[tabindex]:not([tabindex="-1"])',
+].join(",");
+
+function getFocusableElements(container: HTMLElement) {
+  return Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).filter(
+    (element) =>
+      !element.hasAttribute("disabled") && element.getAttribute("aria-hidden") !== "true",
+  );
+}
+
 function isOpen(view: FloatingNavigationView) {
   return view !== "closed";
 }
@@ -60,6 +76,41 @@ export const FloatingNavigationUI = ({
       if (event.key === "Escape") {
         event.stopPropagation();
         handleClose();
+        return;
+      }
+
+      if (event.key === "Tab") {
+        const panel = panelRef.current;
+        if (!panel) {
+          return;
+        }
+
+        const focusableElements = getFocusableElements(panel);
+        const firstElement = focusableElements.at(0);
+        const lastElement = focusableElements.at(-1);
+
+        if (!firstElement || !lastElement) {
+          event.preventDefault();
+          panel.focus();
+          return;
+        }
+
+        if (event.shiftKey && document.activeElement === firstElement) {
+          event.preventDefault();
+          lastElement.focus();
+          return;
+        }
+
+        if (event.shiftKey && document.activeElement === panel) {
+          event.preventDefault();
+          lastElement.focus();
+          return;
+        }
+
+        if (!event.shiftKey && document.activeElement === lastElement) {
+          event.preventDefault();
+          firstElement.focus();
+        }
       }
     },
     [handleClose],

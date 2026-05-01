@@ -82,6 +82,26 @@ test("moves focus into the active panel when switching panels", async () => {
   });
 });
 
+test("keeps tab focus inside the open menu panel", async () => {
+  const user = userEvent.setup();
+
+  renderFloatingNavigation();
+
+  await user.click(screen.getByRole("button", { name: "Open navigation" }));
+
+  const aboutButton = screen.getByRole("button", { name: "これはなに？" });
+  const closeButton = screen.getByRole("button", { name: "閉じる" });
+
+  closeButton.focus();
+  await user.tab();
+
+  expect(document.activeElement).toBe(aboutButton);
+
+  await user.tab({ shift: true });
+
+  expect(document.activeElement).toBe(closeButton);
+});
+
 test("closes the panel with Escape", async () => {
   const user = userEvent.setup();
 
