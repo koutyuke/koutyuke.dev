@@ -78,7 +78,7 @@
 - Git hook は Lefthook を使う。
 - pre-commit は `vp staged` と `vp run css:lint` を実行する。
 - pre-push は `vp build` を実行する。
-- CI は `vp install`, `vp check`, `vp test`, `vp run storybook`, `vp build` を実行する。
+- CI は `vp install`, `vp check`, `vp test`, `vp run sb:build`, `vp build` を実行する。
 
 ## Safety
 

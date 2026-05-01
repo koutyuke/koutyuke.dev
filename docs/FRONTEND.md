@@ -12,7 +12,7 @@ vp dev
 vp check
 vp test
 vp run css:lint
-vp run storybook
+vp run sb:build
 vp build
 ```
 
@@ -63,7 +63,7 @@ Tailwind CSS v4 を使う。
 - class merge は `src/shared/lib/cn.ts` の `cn` を使う。
 
 ```tsx
-import { cn } from "../shared/lib";
+import { cn } from "src/shared/lib/cn";
 
 <button className={cn("bg-iris-9 text-slate-1", isActive && "bg-iris-10")} />;
 ```
@@ -89,8 +89,8 @@ import type { ZodSchema } from "zod";
 Storybook は component catalog として使う。
 
 ```sh
-vp run storybook:dev
-vp run storybook
+vp run sb
+vp run sb:build
 ```
 
 story は component の近くに置く。

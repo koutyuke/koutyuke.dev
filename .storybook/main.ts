@@ -1,6 +1,12 @@
 import type { StorybookConfig } from "@storybook/react-vite";
 
-const ignoredWatchPaths = [".*/**", "**/dist/**", "**/storybook-static/**", "/nix/store/**"];
+const ignoredWatchPaths = [
+  ".git/**",
+  ".tmp/**",
+  "**/dist/**",
+  "**/storybook-static/**",
+  "/nix/store/**",
+];
 
 const storybookConfig: StorybookConfig = {
   stories: ["../src/**/*.stories.@(ts|tsx)"],
