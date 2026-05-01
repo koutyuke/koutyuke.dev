@@ -13,6 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
+  checks: read
   contents: read
   issues: write
   pull-requests: write
@@ -38,86 +39,57 @@ jobs:
             const {owner, repo} = context.repo;
             const pullRequest = context.payload.pull_request;
             const headSha = pullRequest.head.sha;
-            const issue_number = pullRequest.number;
-            const cloudflareBotLogin = "cloudflare-workers-and-pages[bot]";
             const previewUrlPattern =
               /<strong>Preview URL:<\/strong><\/td><td>[\s\S]*?<a href=['"]([^'"]+\.pages\.dev)['"]/i;
             const deadline = Date.now() + 10 * 60 * 1000;
             const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
             let attempt = 0;
 
-            core.info(`Looking for Cloudflare Pages preview comment on PR #${issue_number}.`);
+            core.info(`Waiting for Cloudflare Pages check run on PR #${pullRequest.number}.`);
             core.info(`Expected head SHA: ${headSha}`);
-            core.info(`Expected bot login: ${cloudflareBotLogin}`);
 
-            function parseCloudflareComment(comment) {
-              const body = comment.body ?? "";
-              const commitMatch = body.match(/<code>([0-9a-f]{7,40})<\/code>/i);
-              const latestCommit = commitMatch?.[1] ?? "";
-
-              return {
-                id: comment.id,
-                updatedAt: comment.updated_at,
-                latestCommit,
-                isCurrentHead: Boolean(latestCommit && headSha.startsWith(latestCommit)),
-                isSuccessful: body.includes("Deploy successful"),
-                previewUrl: body.match(previewUrlPattern)?.[1] ?? "",
-              };
+            function parsePreviewUrl(checkRun) {
+              return checkRun.output?.summary?.match(previewUrlPattern)?.[1] ?? "";
             }
 
-            function summarizeRecentComments(comments) {
-              return comments
-                .slice(-10)
-                .map((comment) => {
-                  const hasPagesUrl = (comment.body ?? "").includes(".pages.dev");
-                  return [
-                    `id=${comment.id}`,
-                    `author=${comment.user?.login}`,
-                    `updated=${comment.updated_at}`,
-                    `hasPagesUrl=${hasPagesUrl}`,
-                  ].join(" ");
-                })
-                .join("\n");
-            }
-
-            async function findPreviewUrlFromCloudflareComment() {
+            async function findPreviewUrlFromCheckRun() {
               attempt += 1;
-              const comments = await github.paginate(github.rest.issues.listComments, {
+              const checkRuns = await github.paginate(github.rest.checks.listForRef, {
                 owner,
                 repo,
-                issue_number,
+                ref: headSha,
+                check_name: "Cloudflare Pages",
                 per_page: 100,
               });
 
-              core.info(`Attempt ${attempt}: fetched ${comments.length} PR comments.`);
-              const recentCommentSummary = summarizeRecentComments(comments);
+              const cloudflareCheckRuns = checkRuns
+                .filter((checkRun) => checkRun.app?.slug === "cloudflare-workers-and-pages")
+                .sort((left, right) => new Date(right.completed_at ?? right.started_at ?? 0) - new Date(left.completed_at ?? left.started_at ?? 0));
 
-              if (recentCommentSummary) {
-                core.info(`Attempt ${attempt}: recent comments:\n${recentCommentSummary}`);
-              }
+              core.info(`Attempt ${attempt}: found ${cloudflareCheckRuns.length} Cloudflare Pages check runs.`);
 
-              const cloudflareComments = comments
-                .filter((comment) => comment.user?.login === cloudflareBotLogin)
-                .sort((left, right) => new Date(right.updated_at) - new Date(left.updated_at));
-
-              core.info(`Attempt ${attempt}: found ${cloudflareComments.length} Cloudflare comments.`);
-
-              for (const comment of cloudflareComments) {
-                const parsed = parseCloudflareComment(comment);
+              for (const checkRun of cloudflareCheckRuns) {
+                const previewUrl = parsePreviewUrl(checkRun);
 
                 core.info(
                   [
-                    `Attempt ${attempt}: inspect Cloudflare comment id=${parsed.id}`,
-                    `updated=${parsed.updatedAt}`,
-                    `latestCommit=${parsed.latestCommit || "(not found)"}`,
-                    `isCurrentHead=${parsed.isCurrentHead}`,
-                    `isSuccessful=${parsed.isSuccessful}`,
-                    `previewUrl=${parsed.previewUrl || "(not found)"}`,
+                    `Attempt ${attempt}: inspect check_run id=${checkRun.id}`,
+                    `status=${checkRun.status}`,
+                    `conclusion=${checkRun.conclusion ?? "(none)"}`,
+                    `previewUrl=${previewUrl || "(not found)"}`,
                   ].join(" "),
                 );
 
-                if (parsed.isCurrentHead && parsed.isSuccessful && parsed.previewUrl) {
-                  return parsed.previewUrl;
+                if (checkRun.status !== "completed") {
+                  continue;
+                }
+
+                if (checkRun.conclusion !== "success") {
+                  throw new Error(`Cloudflare Pages check run completed with conclusion: ${checkRun.conclusion}.`);
+                }
+
+                if (previewUrl) {
+                  return previewUrl;
                 }
               }
 
@@ -125,19 +97,22 @@ jobs:
             }
 
             while (Date.now() < deadline) {
-              const previewUrl = await findPreviewUrlFromCloudflareComment();
+              const previewUrl = await findPreviewUrlFromCheckRun();
 
               if (previewUrl) {
                 core.info(`Found preview URL: ${previewUrl}`);
                 core.setOutput("url", previewUrl);
+                core.setOutput("pr-number", String(pullRequest.number));
+                core.setOutput("sha", headSha);
                 return;
               }
 
-              core.info("Cloudflare Pages comment is not ready yet. Waiting...");
+              core.info("Cloudflare Pages check run is not ready yet. Waiting...");
               await sleep(15 * 1000);
             }
 
-            core.setFailed("Cloudflare Pages preview URL comment was not found within 10 minutes.");
+            core.setFailed("Cloudflare Pages preview URL was not found within 10 minutes.");
+            core.setOutput("sha", headSha);
 
       - name: Run Lighthouse
         run: |
@@ -155,7 +130,7 @@ jobs:
         id: upload-report
         uses: actions/upload-artifact@v4
         with:
-          name: lighthouse-report-${{ github.event.pull_request.number }}
+          name: lighthouse-report-${{ steps.preview.outputs.pr-number }}
           path: .tmp/lighthouse/
           if-no-files-found: error
           retention-days: 14
@@ -164,12 +139,28 @@ jobs:
         uses: actions/github-script@v7
         env:
           ARTIFACT_URL: ${{ steps.upload-report.outputs.artifact-url }}
+          DEPLOYMENT_SHA: ${{ steps.preview.outputs.sha }}
+          PR_NUMBER: ${{ steps.preview.outputs.pr-number }}
           PREVIEW_URL: ${{ steps.preview.outputs.url }}
         with:
           script: |
             const fs = require("node:fs");
             const {owner, repo} = context.repo;
-            const issue_number = context.payload.pull_request.number;
+            const issue_number = Number(process.env.PR_NUMBER);
+            const deploymentSha = process.env.DEPLOYMENT_SHA;
+            const {data: pullRequest} = await github.rest.pulls.get({
+              owner,
+              repo,
+              pull_number: issue_number,
+            });
+
+            if (pullRequest.head.sha !== deploymentSha) {
+              core.warning(
+                `Skip Lighthouse comment because PR head changed from ${deploymentSha} to ${pullRequest.head.sha}.`,
+              );
+              return;
+            }
+
             const report = JSON.parse(
               fs.readFileSync(".tmp/lighthouse/report.report.json", "utf8"),
             );
