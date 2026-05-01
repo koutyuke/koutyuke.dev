@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { footprints } from "../../../entities/footprint";
+import { mockFootprints } from "./footprints-section.fixtures";
 import { FootprintsSectionUI } from "./footprints-section.ui";
 
 const meta = {
@@ -17,6 +17,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    footprints,
+    footprints: mockFootprints,
   },
 };

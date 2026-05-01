@@ -124,7 +124,11 @@ entities/*/model
 
 - Container: `*.tsx`。entity data、feature state、slot を組み立てて Presenter に渡す。
 - Presenter: `*.ui.tsx`。props をもとに表示する。Storybook は Presenter を中心に作る。
+- Presenter は state を持ってよい。判断基準は state の有無ではなく、外部副作用や application state へ接続するかどうかである。
+- dialog / popover / menu の開閉、active panel、focus management、Escape key close などの UI-local behavior は Presenter に閉じる。
 - `shared` と `entities` の小さな表示部品は、分割コストが高い場合は単一 component のままでよい。
+- Presenter の Storybook は、実 Container を import せず、`args` に mock / fixture を渡す。
+- 複数 story / test で再利用する fixture は近接する `*.fixtures.ts(x)` に置き、slice の `index.ts` から公開しない。
 
 例:
 

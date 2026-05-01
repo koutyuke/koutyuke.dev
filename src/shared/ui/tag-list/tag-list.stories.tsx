@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { techStacks } from "../../../entities/profile";
 import { TagList } from "./tag-list";
+import { mockManyTags, mockPrimaryTags } from "./tag-list.fixtures";
 
 const meta = {
   component: TagList,
@@ -14,12 +14,12 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
-    tags: techStacks.primary,
+    tags: mockPrimaryTags,
   },
 };
 
 export const ManyTags: Story = {
   args: {
-    tags: [...techStacks.primary, ...techStacks.exploring],
+    tags: mockManyTags,
   },
 };

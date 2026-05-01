@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { techStacks } from "../../../entities/profile";
+import { mockTechStacks } from "./about-section.fixtures";
 import { AboutSectionUI } from "./about-section.ui";
 
 const meta = {
@@ -17,6 +17,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    techStacks,
+    techStacks: mockTechStacks,
   },
 };
