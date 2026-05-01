@@ -1,27 +1,27 @@
 name: Lighthouse Preview
 
 on:
-  deployment_status:
+  pull_request:
+    types:
+      - opened
+      - ready_for_review
+      - reopened
+      - synchronize
 
 concurrency:
-  group: lighthouse-preview-${{ github.event.deployment.ref || github.event.deployment.sha }}
+  group: lighthouse-preview-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 permissions:
+  checks: read
   contents: read
-  deployments: read
   issues: write
   pull-requests: write
 
 jobs:
   lighthouse:
     name: Lighthouse preview
-    if: |
-      github.event.deployment_status.state == 'success' &&
-      (
-        contains(github.event.deployment_status.environment_url, '.pages.dev') ||
-        contains(github.event.deployment_status.target_url, '.pages.dev')
-      )
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -31,53 +31,88 @@ jobs:
         with:
           node-version: 24
 
-      - name: Resolve preview deployment
+      - name: Find Cloudflare Pages preview URL
         id: preview
         uses: actions/github-script@v7
         with:
           script: |
             const {owner, repo} = context.repo;
-            const deployment = context.payload.deployment;
-            const deploymentStatus = context.payload.deployment_status;
-            const headSha = deployment.sha;
-            const previewUrl = [
-              deploymentStatus.environment_url,
-              deploymentStatus.target_url,
-            ].find((url) => url?.includes(".pages.dev"));
+            const pullRequest = context.payload.pull_request;
+            const headSha = pullRequest.head.sha;
+            const previewUrlPattern =
+              /<strong>Preview URL:<\/strong><\/td><td>[\s\S]*?<a href=['"]([^'"]+\.pages\.dev)['"]/i;
+            const deadline = Date.now() + 10 * 60 * 1000;
+            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+            let attempt = 0;
 
-            if (!previewUrl) {
-              core.setFailed("Deployment status does not include a Cloudflare Pages preview URL.");
-              return;
+            core.info(`Waiting for Cloudflare Pages check run on PR #${pullRequest.number}.`);
+            core.info(`Expected head SHA: ${headSha}`);
+
+            function parsePreviewUrl(checkRun) {
+              return checkRun.output?.summary?.match(previewUrlPattern)?.[1] ?? "";
             }
 
-            core.info(`Deployment SHA: ${headSha}`);
-            core.info(`Deployment environment: ${deployment.environment}`);
-            core.info(`Preview URL: ${previewUrl}`);
-
-            const associatedPullRequests = await github.paginate(
-              github.rest.repos.listPullRequestsAssociatedWithCommit,
-              {
+            async function findPreviewUrlFromCheckRun() {
+              attempt += 1;
+              const checkRuns = await github.paginate(github.rest.checks.listForRef, {
                 owner,
                 repo,
-                commit_sha: headSha,
+                ref: headSha,
+                check_name: "Cloudflare Pages",
                 per_page: 100,
-              },
-            );
+              });
 
-            const pullRequest = associatedPullRequests
-              .filter((candidate) => candidate.head.repo?.full_name === `${owner}/${repo}`)
-              .filter((candidate) => candidate.state === "open")
-              .find((candidate) => candidate.head.sha === headSha);
+              const cloudflareCheckRuns = checkRuns
+                .filter((checkRun) => checkRun.app?.slug === "cloudflare-workers-and-pages")
+                .sort((left, right) => new Date(right.completed_at ?? right.started_at ?? 0) - new Date(left.completed_at ?? left.started_at ?? 0));
 
-            if (!pullRequest) {
-              core.setFailed(`No open same-repository pull request is associated with deployment SHA ${headSha}.`);
-              return;
+              core.info(`Attempt ${attempt}: found ${cloudflareCheckRuns.length} Cloudflare Pages check runs.`);
+
+              for (const checkRun of cloudflareCheckRuns) {
+                const previewUrl = parsePreviewUrl(checkRun);
+
+                core.info(
+                  [
+                    `Attempt ${attempt}: inspect check_run id=${checkRun.id}`,
+                    `status=${checkRun.status}`,
+                    `conclusion=${checkRun.conclusion ?? "(none)"}`,
+                    `previewUrl=${previewUrl || "(not found)"}`,
+                  ].join(" "),
+                );
+
+                if (checkRun.status !== "completed") {
+                  continue;
+                }
+
+                if (checkRun.conclusion !== "success") {
+                  throw new Error(`Cloudflare Pages check run completed with conclusion: ${checkRun.conclusion}.`);
+                }
+
+                if (previewUrl) {
+                  return previewUrl;
+                }
+              }
+
+              return "";
             }
 
-            core.info(`Resolved PR #${pullRequest.number}.`);
+            while (Date.now() < deadline) {
+              const previewUrl = await findPreviewUrlFromCheckRun();
+
+              if (previewUrl) {
+                core.info(`Found preview URL: ${previewUrl}`);
+                core.setOutput("url", previewUrl);
+                core.setOutput("pr-number", String(pullRequest.number));
+                core.setOutput("sha", headSha);
+                return;
+              }
+
+              core.info("Cloudflare Pages check run is not ready yet. Waiting...");
+              await sleep(15 * 1000);
+            }
+
+            core.setFailed("Cloudflare Pages preview URL was not found within 10 minutes.");
             core.setOutput("sha", headSha);
-            core.setOutput("url", previewUrl);
-            core.setOutput("pr-number", String(pullRequest.number));
 
       - name: Run Lighthouse
         run: |
