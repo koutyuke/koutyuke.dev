@@ -4,7 +4,7 @@ import { FigmaIcon } from "./figma";
 
 const meta = {
   component: FigmaIcon,
-  title: "Components/Icons/FigmaIcon",
+  title: "Shared/Icons/FigmaIcon",
 } satisfies Meta<typeof FigmaIcon>;
 
 export default meta;

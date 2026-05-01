@@ -4,7 +4,7 @@ import { AsteriskIcon } from "./asterisk";
 
 const meta = {
   component: AsteriskIcon,
-  title: "Components/Icons/AsteriskIcon",
+  title: "Shared/Icons/AsteriskIcon",
 } satisfies Meta<typeof AsteriskIcon>;
 
 export default meta;

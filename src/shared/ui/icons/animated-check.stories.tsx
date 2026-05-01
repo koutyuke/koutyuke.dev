@@ -4,7 +4,7 @@ import { AnimatedCheckIcon } from "./animated-check";
 
 const meta = {
   component: AnimatedCheckIcon,
-  title: "Components/Icons/AnimatedCheckIcon",
+  title: "Shared/Icons/AnimatedCheckIcon",
 } satisfies Meta<typeof AnimatedCheckIcon>;
 
 export default meta;

@@ -4,7 +4,7 @@ import { TwitterIcon } from "./twitter";
 
 const meta = {
   component: TwitterIcon,
-  title: "Components/Icons/TwitterIcon",
+  title: "Shared/Icons/TwitterIcon",
 } satisfies Meta<typeof TwitterIcon>;
 
 export default meta;

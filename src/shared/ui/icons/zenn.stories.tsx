@@ -4,7 +4,7 @@ import { ZennIcon } from "./zenn";
 
 const meta = {
   component: ZennIcon,
-  title: "Components/Icons/ZennIcon",
+  title: "Shared/Icons/ZennIcon",
 } satisfies Meta<typeof ZennIcon>;
 
 export default meta;

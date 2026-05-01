@@ -4,7 +4,7 @@ import { GithubIcon } from "./github";
 
 const meta = {
   component: GithubIcon,
-  title: "Components/Icons/GithubIcon",
+  title: "Shared/Icons/GithubIcon",
 } satisfies Meta<typeof GithubIcon>;
 
 export default meta;

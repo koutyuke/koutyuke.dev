@@ -4,7 +4,7 @@ import { SectionHeading } from "./section-heading";
 
 const meta = {
   component: SectionHeading,
-  title: "Components/SectionHeading",
+  title: "Shared/SectionHeading",
 } satisfies Meta<typeof SectionHeading>;
 
 export default meta;

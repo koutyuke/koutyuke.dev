@@ -4,7 +4,7 @@ import { KoutyukeIcon } from "./koutyuke";
 
 const meta = {
   component: KoutyukeIcon,
-  title: "Components/Icons/KoutyukeIcon",
+  title: "Shared/Icons/KoutyukeIcon",
 } satisfies Meta<typeof KoutyukeIcon>;
 
 export default meta;
