@@ -12,7 +12,7 @@ vp dev
 vp check
 vp test
 vp run css:lint
-vp run storybook
+vp run sb:build
 vp build
 ```
 
@@ -34,9 +34,10 @@ deploy は Cloudflare Pages の Git integration に委譲する。Cloudflare Pag
 React は routing のためではなく component boundary のために使う。
 
 - client-side router は day one では入れない。
-- section は `sections/` に分ける。
-- behavior を持つ UI は `features/` に分ける。
-- shared helper は `lib/` に置く。
+- page composition は `pages/`、section 相当の大きな UI block は `widgets/` に分ける。
+- behavior を持つ再利用可能な product feature は `features/` に分ける。
+- domain data と domain UI は `entities/` に置く。
+- shared helper は `shared/lib/` に置く。
 - component 名は PascalCase、file 名は kebab-case にする。
 
 ## State
@@ -55,14 +56,14 @@ floating navigation の open / close など局所 UI state は、まず componen
 
 Tailwind CSS v4 を使う。
 
-- global stylesheet は `src/styles/global.css`。
+- global stylesheet は `src/app/styles/global.css`。
 - reset CSS は `the-new-css-reset`。
 - color は `@radix-ui/colors` を `@theme inline` で公開する。
 - default Tailwind colors は使わない。
-- class merge は `src/lib/cn.ts` の `cn` を使う。
+- class merge は `src/shared/lib/cn.ts` の `cn` を使う。
 
 ```tsx
-import { cn } from "../lib/cn";
+import { cn } from "src/shared/lib/cn";
 
 <button className={cn("bg-iris-9 text-slate-1", isActive && "bg-iris-10")} />;
 ```
@@ -88,15 +89,16 @@ import type { ZodSchema } from "zod";
 Storybook は component catalog として使う。
 
 ```sh
-vp run storybook:dev
-vp run storybook
+vp run sb
+vp run sb:build
 ```
 
 story は component の近くに置く。
+ただし `app` layer は application-wide configuration と shell の責務なので、Storybook は置かない。
 
 ```text
-src/app/app.tsx
-src/app/app.stories.tsx
+src/widgets/hero/ui/hero-section.ui.tsx
+src/widgets/hero/ui/hero-section.stories.tsx
 ```
 
 ## Test

@@ -30,7 +30,7 @@ jobs:
         run: vp test
 
       - name: Storybook
-        run: vp run storybook
+        run: vp run sb:build
 
       - name: Build
         run: vp build

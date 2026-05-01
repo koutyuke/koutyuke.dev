@@ -1,11 +1,8 @@
 import type { StorybookConfig } from "@storybook/react-vite";
 
 const ignoredWatchPaths = [
-  "**/.direnv/**",
-  "**/.playwright-mcp/**",
-  "**/.serena/**",
-  "**/.tmp/**",
-  "**/.vite-hooks/**",
+  ".git/**",
+  ".tmp/**",
   "**/dist/**",
   "**/storybook-static/**",
   "/nix/store/**",

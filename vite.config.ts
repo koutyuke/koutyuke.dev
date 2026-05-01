@@ -50,7 +50,7 @@ export default defineConfig({
       sortScripts: true,
     },
     sortTailwindcss: {
-      stylesheet: "./src/styles/global.css",
+      stylesheet: "./src/app/styles/global.css",
       functions: ["clsx", "cn"],
       preserveWhitespace: false,
     },

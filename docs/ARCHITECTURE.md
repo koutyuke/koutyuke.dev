@@ -1,14 +1,30 @@
 # Architecture
 
-この project は 1 ページの portfolio だが、将来の section 追加や motion の複雑化に備えて責務を分ける。
+この project は 1 ページ構成の personal portfolio site である。directory structure は Feature-Sliced Design v2.1 を基礎にし、単一ページの規模に合わせて薄く採用する。
 
 ## Principles
 
 - 1 page app として保つ。
 - routing は入れない。
-- content、section、feature、shared helper を混ぜない。
+- layer ごとの責務と依存方向を守る。
+- structured data、UI、state、side effect を混ぜない。
 - global state は最小限にする。
-- Figma に近い見た目を保ちつつ、実装は再利用可能な component に分ける。
+- Figma に近い見た目を保ちつつ、実装は Presenter / Container Pattern で分ける。
+
+## FSD Layers
+
+依存方向は上から下への一方向にする。
+
+```text
+app
+  -> pages
+  -> widgets
+  -> features
+  -> entities
+  -> shared
+```
+
+下位 layer から上位 layer を import しない。同じ layer の slice 同士も直接 import しない。必要な共通要素は `shared` または `entities` に置く。
 
 ## Directory Structure
 
@@ -19,59 +35,58 @@ src/
   main.tsx
   app/
     app.tsx
-    app.stories.tsx
+    styles/
+      global.css
+  pages/
+    home/
+      index.ts
+      ui/
+        home-page.tsx
+        home-page.ui.tsx
+        home-page.stories.tsx
+  widgets/
+    hero/
+      index.ts
+      ui/
+        hero-section.tsx
+        hero-section.ui.tsx
+    about/
+    footprints/
+    contact/
+    footer/
+    floating-navigation/
+      index.ts
+      model/
+      ui/
   features/
     theme/
       index.ts
       lib/
-        theme.ts
       model/
-        theme-atoms.ts
-        use-theme.ts
       ui/
-        theme-sync.tsx
-  lib/
-    cn.ts
-  styles/
-    global.css
+  entities/
+    profile/
+      index.ts
+      model/
+      ui/
+    footprint/
+      index.ts
+      model/
+  shared/
+    lib/
+    ui/
 ```
 
-今後の拡張先:
-
-```text
-src/
-  assets/
-    icons/
-  content/
-    profile.ts
-    links.ts
-    footprints.ts
-  features/
-    floating-navigation/
-      floating-navigation.tsx
-      floating-navigation.stories.tsx
-  sections/
-    hero/
-      hero-section.tsx
-    about/
-      about-section.tsx
-    footprints/
-      footprints-section.tsx
-    contact/
-      contact-section.tsx
-    footer/
-      footer-section.tsx
-```
+`app` と `shared` は slice を持たず、segment 直下に分ける。`pages`、`widgets`、`features`、`entities` は slice を切り、その下に `ui`、`model`、`lib` などの segment を置く。
 
 ## Responsibilities
 
-- `app/`: app shell と top-level composition。
-- `assets/`: svg、image などの static asset。
-- `content/`: portfolio に表示する structured data。
-- `features/`: behavior を持つ UI。theme、floating navigation など。
-- `sections/`: page を構成する content block。
-- `lib/`: feature に依存しない小さな utility。
-- `styles/`: reset 後の global style と design token。
+- `app/`: app shell、global style、app 全体の composition。
+- `pages/`: page 単位の composition。現状は `home` のみ。
+- `widgets/`: page を構成する大きな UI block。section や floating navigation を置く。
+- `features/`: user action と state を持つ product feature。theme switching など。
+- `entities/`: portfolio が扱う domain data と domain UI。profile、footprint など。
+- `shared/`: project / domain に依存しない UI と helper。icons、`cn`、constant など。
 
 ## Data Flow
 
@@ -85,36 +100,50 @@ localStorage.theme
   -> document.documentElement
 ```
 
-page content:
+page composition:
 
 ```text
-src/content/*
-  -> section component
-  -> app shell
+app
+  -> pages/home
+  -> widgets/*
+  -> entities/*
+  -> shared/*
 ```
 
-floating navigation:
+profile / footprint data:
 
 ```text
-section metadata
-  -> navigation item
-  -> active section state
-  -> motion state
+entities/*/model
+  -> widget container
+  -> widget presenter
 ```
 
-## Boundaries
+## Presenter / Container
 
-theme は global state として扱う。theme は app 全体に影響し、DOM root への副作用を持つため。
+`widgets/*` は原則として Container と Presenter を分ける。
 
-floating navigation は feature として扱う。open / close は local state から始め、active section や command palette 的な挙動が増えた時点で atom 化を検討する。
+- Container: `*.tsx`。entity data、feature state、slot を組み立てて Presenter に渡す。
+- Presenter: `*.ui.tsx`。props をもとに表示する。Storybook は Presenter を中心に作る。
+- Presenter は state を持ってよい。判断基準は state の有無ではなく、外部副作用や application state へ接続するかどうかである。
+- dialog / popover / menu の開閉、active panel、focus management、Escape key close などの UI-local behavior は Presenter に閉じる。
+- `shared` と `entities` の小さな表示部品は、分割コストが高い場合は単一 component のままでよい。
+- Presenter の Storybook は、実 Container を import せず、`args` に mock / fixture を渡す。
+- 複数 story / test で再利用する fixture は近接する `*.fixtures.ts(x)` に置き、slice の `index.ts` から公開しない。
 
-content は component に直接埋め込まない。section copy は `content/` へ逃がし、layout と text を分離する。
+例:
 
-## Build / Deploy
+```text
+src/widgets/about/ui/about-section.tsx
+src/widgets/about/ui/about-section.ui.tsx
+```
 
-local build は `vp build`。CI も同じ command を使う。
+## Public API
 
-deploy は Cloudflare Pages の Git integration を使う。Cloudflare Pages 側の build command は `vp build`、build output directory は `dist` にする。
+各 slice は原則として `index.ts` を公開入口にする。
+
+- 上位 layer から `model/` や `ui/` の内部 file を deep import しない。
+- slice 内部の近接 import は許可する。
+- Storybook と test は、対象の Presenter / 内部 helper を検証する目的に限って近接 import してよい。
 
 ## Naming
 
@@ -123,9 +152,10 @@ deploy は Cloudflare Pages の Git integration を使う。Cloudflare Pages 側
 許可:
 
 ```text
-theme-sync.tsx
+home-page.tsx
 floating-navigation.tsx
-hero-section.tsx
+hero-section.ui.tsx
+theme-sync.tsx
 ```
 
 例外:
@@ -139,16 +169,6 @@ ARCHITECTURE.md
 ```
 
 ## Coding Rules
-
-### File Layout
-
-- 実装 file は責務のある directory に置く。
-- page 全体の composition は `app/` に置く。
-- UI behavior を持つ単位は `features/` に置く。
-- page を構成する content block は `sections/` に置く。
-- 表示文言や profile data は `content/` に置く。
-- feature に依存しない helper は `lib/` に置く。
-- global style と token 定義は `styles/` に置く。
 
 ### TypeScript
 
@@ -170,10 +190,11 @@ ARCHITECTURE.md
 ### Styling
 
 - Tailwind CSS v4 を使う。
-- class の結合は `src/lib/cn.ts` の `cn` を使う。
+- class の結合は `src/shared/lib/cn.ts` の `cn` を使う。
 - 色は Radix Colors の direct scale access を使う。
 - `bg-gray-900`, `text-blue-600` など Tailwind default colors は使わない。
 - `bg-surface`, `text-primary` など semantic color token は導入しない。
+- global stylesheet は `src/app/styles/global.css` に置く。
 - CSS の検査は `vp run css:lint` で行う。
 
 ### Import Order
@@ -196,6 +217,8 @@ import type { ZodSchema } from "zod";
 
 - component を追加したら、意味のある単位で story を追加する。
 - story file は component の近くに置く。
+- `app` layer には Storybook を置かない。UI の catalog は `shared` / `entities` / `widgets` / `features` / `pages` で行う。
+- `widgets/*` は Presenter を中心に story を作る。
 - visual variation、theme variation、主要 interaction を catalog 化する。
 
 ### Verification
