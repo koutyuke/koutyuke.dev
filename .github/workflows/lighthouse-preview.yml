@@ -183,9 +183,8 @@ jobs:
               --method GET \
               "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" \
               --paginate \
-              --slurp \
-              --field per_page=100 \
-              --jq '
+              --field per_page=100 |
+              jq -r '
                 flatten
                 | map(select(.user.type == "Bot" and (.body | contains("<!-- lighthouse-preview-report -->"))))
                 | first
