@@ -1,27 +1,33 @@
 name: Lighthouse Preview
 
 on:
-  pull_request:
+  check_run:
     types:
-      - opened
-      - ready_for_review
-      - reopened
-      - synchronize
+      - completed
 
 concurrency:
-  group: lighthouse-preview-${{ github.event.pull_request.number }}
+  group: lighthouse-preview-${{ github.event.check_run.check_suite.head_sha }}
   cancel-in-progress: true
 
 permissions:
   checks: read
   contents: read
   issues: write
-  pull-requests: write
+  pull-requests: read
 
 jobs:
   lighthouse:
     name: Lighthouse preview
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    if: >-
+      github.event.check_run.app.slug == 'cloudflare-workers-and-pages' &&
+      github.event.check_run.name == 'Cloudflare Pages' &&
+      github.event.check_run.status == 'completed' &&
+      github.event.check_run.conclusion == 'success' &&
+      github.event.check_run.check_suite != null &&
+      github.event.check_run.check_suite.head_branch != null &&
+      github.event.check_run.check_suite.head_branch !=
+      github.event.repository.default_branch &&
+      github.event.check_run.check_suite.pull_requests[0] != null
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -31,90 +37,72 @@ jobs:
         with:
           node-version: 24
 
-      - name: Find Cloudflare Pages preview URL
+      - name: Extract Cloudflare Pages preview URL
         id: preview
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const {owner, repo} = context.repo;
-            const pullRequest = context.payload.pull_request;
-            const headSha = pullRequest.head.sha;
-            const previewUrlPattern =
-              /<strong>Preview URL:<\/strong><\/td><td>[\s\S]*?<a href=['"]([^'"]+\.pages\.dev)['"]/i;
-            const deadline = Date.now() + 10 * 60 * 1000;
-            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-            let attempt = 0;
+        run: |
+          set -euo pipefail
 
-            core.info(`Waiting for Cloudflare Pages check run on PR #${pullRequest.number}.`);
-            core.info(`Expected head SHA: ${headSha}`);
+          check_run_json="$(
+            gh api "repos/${GITHUB_REPOSITORY}/check-runs/${CHECK_RUN_ID}"
+          )"
 
-            function parsePreviewUrl(checkRun) {
-              return checkRun.output?.summary?.match(previewUrlPattern)?.[1] ?? "";
-            }
+          preview_url="$(
+            jq -r '
+              try (
+                .output.summary
+                | capture("<strong>Preview URL:</strong></td><td>[\\s\\S]*?<a href=['\''\"](?<url>[^'\''\"]+\\.pages\\.dev)['\''\"]"; "i")
+                | .url
+              ) catch ""
+            ' <<< "${check_run_json}"
+          )"
 
-            async function findPreviewUrlFromCheckRun() {
-              attempt += 1;
-              const checkRuns = await github.paginate(github.rest.checks.listForRef, {
-                owner,
-                repo,
-                ref: headSha,
-                check_name: "Cloudflare Pages",
-                per_page: 100,
-              });
+          if [[ -z "${preview_url}" ]]; then
+            echo "::error::Cloudflare Pages preview URL was not found in check run output."
+            exit 1
+          fi
 
-              const cloudflareCheckRuns = checkRuns
-                .filter((checkRun) => checkRun.app?.slug === "cloudflare-workers-and-pages")
-                .sort((left, right) => new Date(right.completed_at ?? right.started_at ?? 0) - new Date(left.completed_at ?? left.started_at ?? 0));
+          pr_number="$(
+            jq -r '.pull_requests[0].number // empty' <<< "${check_run_json}"
+          )"
 
-              core.info(`Attempt ${attempt}: found ${cloudflareCheckRuns.length} Cloudflare Pages check runs.`);
+          if [[ -z "${pr_number}" ]]; then
+            echo "::error::No pull request was associated with this check run."
+            exit 1
+          fi
 
-              for (const checkRun of cloudflareCheckRuns) {
-                const previewUrl = parsePreviewUrl(checkRun);
+          pr_json="$(
+            gh api "repos/${GITHUB_REPOSITORY}/pulls/${pr_number}"
+          )"
 
-                core.info(
-                  [
-                    `Attempt ${attempt}: inspect check_run id=${checkRun.id}`,
-                    `status=${checkRun.status}`,
-                    `conclusion=${checkRun.conclusion ?? "(none)"}`,
-                    `previewUrl=${previewUrl || "(not found)"}`,
-                  ].join(" "),
-                );
+          pr_head_repo="$(
+            jq -r '.head.repo.full_name' <<< "${pr_json}"
+          )"
 
-                if (checkRun.status !== "completed") {
-                  continue;
-                }
+          current_head_sha="$(
+            jq -r '.head.sha' <<< "${pr_json}"
+          )"
 
-                if (checkRun.conclusion !== "success") {
-                  throw new Error(`Cloudflare Pages check run completed with conclusion: ${checkRun.conclusion}.`);
-                }
+          if [[ "${pr_head_repo}" != "${GITHUB_REPOSITORY}" ]]; then
+            echo "::notice::Skip Lighthouse for fork PR: ${pr_head_repo}"
+            exit 0
+          fi
 
-                if (previewUrl) {
-                  return previewUrl;
-                }
-              }
+          if [[ "${current_head_sha}" != "${HEAD_SHA}" ]]; then
+            echo "::notice::Skip Lighthouse because PR head changed from ${HEAD_SHA} to ${current_head_sha}."
+            exit 0
+          fi
 
-              return "";
-            }
-
-            while (Date.now() < deadline) {
-              const previewUrl = await findPreviewUrlFromCheckRun();
-
-              if (previewUrl) {
-                core.info(`Found preview URL: ${previewUrl}`);
-                core.setOutput("url", previewUrl);
-                core.setOutput("pr-number", String(pullRequest.number));
-                core.setOutput("sha", headSha);
-                return;
-              }
-
-              core.info("Cloudflare Pages check run is not ready yet. Waiting...");
-              await sleep(15 * 1000);
-            }
-
-            core.setFailed("Cloudflare Pages preview URL was not found within 10 minutes.");
-            core.setOutput("sha", headSha);
+          echo "Found preview URL: ${preview_url}"
+          echo "url=${preview_url}" >> "${GITHUB_OUTPUT}"
+          echo "pr-number=${pr_number}" >> "${GITHUB_OUTPUT}"
+          echo "sha=${HEAD_SHA}" >> "${GITHUB_OUTPUT}"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECK_RUN_ID: ${{ github.event.check_run.id }}
+          HEAD_SHA: ${{ github.event.check_run.check_suite.head_sha }}
 
       - name: Run Lighthouse
+        if: steps.preview.outputs.url != ''
         run: |
           mkdir -p .tmp/lighthouse
           npx --yes lighthouse@13.1.0 "${PREVIEW_URL}" \
@@ -127,6 +115,7 @@ jobs:
           PREVIEW_URL: ${{ steps.preview.outputs.url }}
 
       - name: Upload Lighthouse report
+        if: steps.preview.outputs.url != ''
         id: upload-report
         uses: actions/upload-artifact@v4
         with:
@@ -136,94 +125,90 @@ jobs:
           retention-days: 14
 
       - name: Comment Lighthouse score
-        uses: actions/github-script@v7
+        if: steps.preview.outputs.url != ''
+        run: |
+          set -euo pipefail
+
+          current_head_sha="$(
+            gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" --jq '.head.sha'
+          )"
+
+          if [[ "${current_head_sha}" != "${DEPLOYMENT_SHA}" ]]; then
+            echo "::warning::Skip Lighthouse comment because PR head changed from ${DEPLOYMENT_SHA} to ${current_head_sha}."
+            exit 0
+          fi
+
+          report_json=".tmp/lighthouse/report.report.json"
+          marker="<!-- lighthouse-preview-report -->"
+          run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+          score() {
+            jq -r --arg category "${1}" '.categories[$category].score * 100 | round' "${report_json}"
+          }
+
+          display_value() {
+            jq -r --arg audit_id "${1}" '.audits[$audit_id].displayValue // "n/a"' "${report_json}"
+          }
+
+          {
+            echo "## Lighthouse Preview"
+            echo
+            echo "Target: ${PREVIEW_URL}"
+            echo
+            echo "| Category | Score |"
+            echo "| --- | ---: |"
+            echo "| Performance | $(score "performance") |"
+            echo "| Accessibility | $(score "accessibility") |"
+            echo "| Best Practices | $(score "best-practices") |"
+            echo "| SEO | $(score "seo") |"
+            echo
+            echo "| Metric | Value |"
+            echo "| --- | ---: |"
+            echo "| First Contentful Paint | $(display_value "first-contentful-paint") |"
+            echo "| Largest Contentful Paint | $(display_value "largest-contentful-paint") |"
+            echo "| Total Blocking Time | $(display_value "total-blocking-time") |"
+            echo "| Cumulative Layout Shift | $(display_value "cumulative-layout-shift") |"
+            echo "| Speed Index | $(display_value "speed-index") |"
+            echo
+            echo "[Lighthouse report artifact](${ARTIFACT_URL})"
+            echo "[Workflow run](${run_url})"
+          } > .tmp/lighthouse/summary.md
+
+          cat .tmp/lighthouse/summary.md >> "${GITHUB_STEP_SUMMARY}"
+          printf "%s\n" "${marker}" > .tmp/lighthouse/comment.md
+          cat .tmp/lighthouse/summary.md >> .tmp/lighthouse/comment.md
+
+          existing_comment_id="$(
+            gh api \
+              --method GET \
+              "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" \
+              --paginate \
+              --slurp \
+              --field per_page=100 \
+              --jq '
+                flatten
+                | map(select(.user.type == "Bot" and (.body | contains("<!-- lighthouse-preview-report -->"))))
+                | first
+                | .id // ""
+              '
+          )"
+
+          jq -n --rawfile body .tmp/lighthouse/comment.md '{body: $body}' > .tmp/lighthouse/comment-payload.json
+
+          if [[ -n "${existing_comment_id}" ]]; then
+            gh api \
+              --method PATCH \
+              "repos/${GITHUB_REPOSITORY}/issues/comments/${existing_comment_id}" \
+              --input .tmp/lighthouse/comment-payload.json >/dev/null
+          else
+            gh api \
+              --method POST \
+              "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" \
+              --input .tmp/lighthouse/comment-payload.json >/dev/null
+          fi
         env:
           ARTIFACT_URL: ${{ steps.upload-report.outputs.artifact-url }}
           DEPLOYMENT_SHA: ${{ steps.preview.outputs.sha }}
+          GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ steps.preview.outputs.pr-number }}
           PREVIEW_URL: ${{ steps.preview.outputs.url }}
-        with:
-          script: |
-            const fs = require("node:fs");
-            const {owner, repo} = context.repo;
-            const issue_number = Number(process.env.PR_NUMBER);
-            const deploymentSha = process.env.DEPLOYMENT_SHA;
-            const {data: pullRequest} = await github.rest.pulls.get({
-              owner,
-              repo,
-              pull_number: issue_number,
-            });
-
-            if (pullRequest.head.sha !== deploymentSha) {
-              core.warning(
-                `Skip Lighthouse comment because PR head changed from ${deploymentSha} to ${pullRequest.head.sha}.`,
-              );
-              return;
-            }
-
-            const report = JSON.parse(
-              fs.readFileSync(".tmp/lighthouse/report.report.json", "utf8"),
-            );
-            const marker = "<!-- lighthouse-preview-report -->";
-            const score = (category) => Math.round(report.categories[category].score * 100);
-            const displayValue = (auditId) => report.audits[auditId]?.displayValue ?? "n/a";
-            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
-            const artifactUrl = process.env.ARTIFACT_URL;
-
-            const summary = [
-              "## Lighthouse Preview",
-              "",
-              `Target: ${process.env.PREVIEW_URL}`,
-              "",
-              "| Category | Score |",
-              "| --- | ---: |",
-              `| Performance | ${score("performance")} |`,
-              `| Accessibility | ${score("accessibility")} |`,
-              `| Best Practices | ${score("best-practices")} |`,
-              `| SEO | ${score("seo")} |`,
-              "",
-              "| Metric | Value |",
-              "| --- | ---: |",
-              `| First Contentful Paint | ${displayValue("first-contentful-paint")} |`,
-              `| Largest Contentful Paint | ${displayValue("largest-contentful-paint")} |`,
-              `| Total Blocking Time | ${displayValue("total-blocking-time")} |`,
-              `| Cumulative Layout Shift | ${displayValue("cumulative-layout-shift")} |`,
-              `| Speed Index | ${displayValue("speed-index")} |`,
-              "",
-              `[Lighthouse report artifact](${artifactUrl})`,
-              `[Workflow run](${runUrl})`,
-            ].join("\n");
-
-            const body = [
-              marker,
-              summary,
-            ].join("\n");
-
-            await fs.promises.appendFile(process.env.GITHUB_STEP_SUMMARY, `${summary}\n`);
-
-            const comments = await github.paginate(github.rest.issues.listComments, {
-              owner,
-              repo,
-              issue_number,
-              per_page: 100,
-            });
-
-            const existingComment = comments.find((comment) => {
-              return comment.user?.type === "Bot" && comment.body.includes(marker);
-            });
-
-            if (existingComment) {
-              await github.rest.issues.updateComment({
-                owner,
-                repo,
-                comment_id: existingComment.id,
-                body,
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number,
-                body,
-              });
-            }
