@@ -9,22 +9,7 @@ on:
     types:
       - completed
 
-  workflow_dispatch:
-    inputs:
-      mode:
-        description: Cleanup mode
-        type: choice
-        options:
-          - post-production
-          - pr-closed
-        default: post-production
-      pr_branch:
-        description: PR head branch for pr-closed mode
-        type: string
-        required: false
-
 permissions:
-  checks: read
   contents: read
 
 jobs:
@@ -34,6 +19,9 @@ jobs:
       github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    concurrency:
+      group: cloudflare-pages-cleanup-pr-${{ github.event.pull_request.head.ref }}
+      cancel-in-progress: false
     timeout-minutes: 10
 
     steps:
@@ -61,6 +49,10 @@ jobs:
       github.event.check_run.check_suite.head_branch ==
       github.event.repository.default_branch
     runs-on: ubuntu-latest
+    concurrency:
+      group: cloudflare-pages-cleanup-production-${{
+        github.event.repository.default_branch }}
+      cancel-in-progress: false
     timeout-minutes: 10
 
     steps:
