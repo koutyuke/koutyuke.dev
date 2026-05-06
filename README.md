@@ -84,15 +84,22 @@ Daily development tasks are routed through Vite+.
 
 ```text
 src/
-├── app/                         # application shell
-├── components/                  # shared presentational components
-├── content/                     # profile and footprint content
+├── app/                         # application shell and global styles
+├── entities/                    # domain data and entity UI
+│   ├── footprint/               # footprint content model
+│   └── profile/                 # profile model and social links UI
 ├── features/
-│   ├── floating-navigation/     # navigation state, motion, panels
 │   └── theme/                   # theme state and DOM sync
-├── lib/                         # small shared utilities
-├── sections/                    # page sections
-└── styles/                      # global CSS and Tailwind theme
+├── pages/
+│   └── home/                    # home page composition
+├── shared/                      # shared UI primitives and utilities
+└── widgets/                     # page sections and floating navigation
+    ├── about/
+    ├── contact/
+    ├── floating-navigation/
+    ├── footer/
+    ├── footprints/
+    └── hero/
 ```
 
 ## Documentation
