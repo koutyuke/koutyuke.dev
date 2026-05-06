@@ -93,9 +93,11 @@ jobs:
           fi
 
           echo "Found preview URL: ${preview_url}"
-          echo "url=${preview_url}" >> "${GITHUB_OUTPUT}"
-          echo "pr-number=${pr_number}" >> "${GITHUB_OUTPUT}"
-          echo "sha=${HEAD_SHA}" >> "${GITHUB_OUTPUT}"
+          {
+            echo "url=${preview_url}"
+            echo "pr-number=${pr_number}"
+            echo "sha=${HEAD_SHA}"
+          } >> "${GITHUB_OUTPUT}"
         env:
           GH_TOKEN: ${{ github.token }}
           CHECK_RUN_ID: ${{ github.event.check_run.id }}
@@ -184,7 +186,7 @@ jobs:
               "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" \
               --paginate \
               --field per_page=100 |
-              jq -r '
+              jq --slurp -r '
                 flatten
                 | map(select(.user.type == "Bot" and (.body | contains("<!-- lighthouse-preview-report -->"))))
                 | first
