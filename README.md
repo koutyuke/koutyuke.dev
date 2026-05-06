@@ -16,9 +16,9 @@
 
   <p>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-111111?style=flat" alt="MIT License"></a>
-    <img src="https://img.shields.io/badge/React-19-61dafb?style=flat&logo=react&logoColor=111111" alt="React 19">
-    <img src="https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?style=flat&logo=tailwindcss&logoColor=ffffff" alt="Tailwind CSS v4">
-    <img src="https://img.shields.io/badge/Vite+-toolchain-646cff?style=flat&logo=vite&logoColor=ffffff" alt="Vite+">
+    <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19-61dafb?style=flat&logo=react&logoColor=111111" alt="React 19"></a>
+    <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?style=flat&logo=tailwindcss&logoColor=ffffff" alt="Tailwind CSS v4"></a>
+    <a href="https://viteplus.dev/"><img src="https://img.shields.io/badge/Vite+-toolchain-646cff?style=flat&logo=vite&logoColor=ffffff" alt="Vite+"></a>
   </p>
 
 </div>
