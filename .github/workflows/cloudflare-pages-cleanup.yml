@@ -15,24 +15,11 @@ on:
         description: Cleanup mode
         type: choice
         options:
-          - full-scan
           - post-production
           - pr-closed
-        default: full-scan
-      dry_run:
-        description: Print delete candidates without deleting deployments
-        type: boolean
-        default: true
-      delete_alias_deployments:
-        description: Delete deployments that have aliases
-        type: boolean
-        default: false
+        default: post-production
       pr_branch:
         description: PR head branch for pr-closed mode
-        type: string
-        required: false
-      pr_sha:
-        description: PR head SHA for pr-closed mode
         type: string
         required: false
 
@@ -58,23 +45,21 @@ jobs:
           CF_ACCOUNT_ID: ${{ vars.CF_ACCOUNT_ID }}
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CF_PAGES_PROJECT_NAME: ${{ vars.CF_PAGES_PROJECT_NAME }}
-          CF_PAGES_PRODUCTION_BRANCH: ${{ vars.CF_PAGES_PRODUCTION_BRANCH || github.event.repository.default_branch }}
-          CLEANUP_DELETE_ALIAS_DEPLOYMENTS: ${{ vars.CF_PAGES_DELETE_ALIAS_DEPLOYMENTS || 'false' }}
-          CLEANUP_DRY_RUN: ${{ vars.CF_PAGES_CLEANUP_DRY_RUN || 'true' }}
           CLEANUP_MODE: pr-closed
-          CLEANUP_PR_BRANCH: ${{ github.event.pull_request.head.ref }}
-          CLEANUP_PR_SHA: ${{ github.event.pull_request.head.sha }}
-        run: scripts/cloudflare-pages-cleanup.sh
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: .github/scripts/cloudflare-pages-deploy-cleanup.sh
 
   cleanup-production:
     name: Cleanup previews after production deploy
     if: >-
-      github.event_name == 'check_run' &&
-      github.event.check_run.app.slug == 'cloudflare-workers-and-pages' &&
-      github.event.check_run.name == 'Cloudflare Pages' &&
-      github.event.check_run.status == 'completed' &&
+      github.event_name == 'check_run' && github.event.check_run.app.slug ==
+      'cloudflare-workers-and-pages' && github.event.check_run.name ==
+      'Cloudflare Pages' && github.event.check_run.status == 'completed' &&
       github.event.check_run.conclusion == 'success' &&
-      github.event.check_run.check_suite.head_branch == github.event.repository.default_branch
+      github.event.check_run.check_suite != null &&
+      github.event.check_run.check_suite.head_branch != null &&
+      github.event.check_run.check_suite.head_branch ==
+      github.event.repository.default_branch
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -87,31 +72,8 @@ jobs:
           CF_ACCOUNT_ID: ${{ vars.CF_ACCOUNT_ID }}
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CF_PAGES_PROJECT_NAME: ${{ vars.CF_PAGES_PROJECT_NAME }}
-          CF_PAGES_PRODUCTION_BRANCH: ${{ vars.CF_PAGES_PRODUCTION_BRANCH || github.event.repository.default_branch }}
-          CLEANUP_DELETE_ALIAS_DEPLOYMENTS: ${{ vars.CF_PAGES_DELETE_ALIAS_DEPLOYMENTS || 'false' }}
-          CLEANUP_DRY_RUN: ${{ vars.CF_PAGES_CLEANUP_DRY_RUN || 'true' }}
           CLEANUP_MODE: post-production
-        run: scripts/cloudflare-pages-cleanup.sh
-
-  cleanup-manual:
-    name: Manual cleanup
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Cleanup Cloudflare Pages deployments
-        env:
-          CF_ACCOUNT_ID: ${{ vars.CF_ACCOUNT_ID }}
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-          CF_PAGES_PROJECT_NAME: ${{ vars.CF_PAGES_PROJECT_NAME }}
-          CF_PAGES_PRODUCTION_BRANCH: ${{ vars.CF_PAGES_PRODUCTION_BRANCH || github.event.repository.default_branch }}
-          CLEANUP_DELETE_ALIAS_DEPLOYMENTS: ${{ inputs.delete_alias_deployments }}
-          CLEANUP_DRY_RUN: ${{ inputs.dry_run }}
-          CLEANUP_MODE: ${{ inputs.mode }}
-          CLEANUP_PR_BRANCH: ${{ inputs.pr_branch }}
-          CLEANUP_PR_SHA: ${{ inputs.pr_sha }}
-        run: scripts/cloudflare-pages-cleanup.sh
+          PRODUCTION_ALIAS: ${{ vars.CF_PAGES_PRODUCTION_ALIAS || 'https://koutyuke.dev' }}
+          PRODUCTION_BRANCH: ${{ vars.CF_PAGES_PRODUCTION_BRANCH ||
+            github.event.repository.default_branch }}
+        run: .github/scripts/cloudflare-pages-deploy-cleanup.sh
