@@ -23,6 +23,7 @@
             nixfmt-rfc-style
             nodejs_24
             pnpm
+            shfmt
           ];
         };
       }
