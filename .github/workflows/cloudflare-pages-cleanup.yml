@@ -35,7 +35,7 @@ jobs:
           CF_PAGES_PROJECT_NAME: ${{ vars.CF_PAGES_PROJECT_NAME }}
           CLEANUP_MODE: pr-closed
           PR_BRANCH: ${{ github.event.pull_request.head.ref }}
-        run: .github/scripts/cloudflare-pages-deploy-cleanup.sh
+        run: .github/workflows/scripts/cloudflare-pages-deploy-cleanup.sh
 
   cleanup-production:
     name: Cleanup previews after production deploy
@@ -68,4 +68,4 @@ jobs:
           PRODUCTION_ALIAS: ${{ vars.CF_PAGES_PRODUCTION_ALIAS || 'https://koutyuke.dev' }}
           PRODUCTION_BRANCH: ${{ vars.CF_PAGES_PRODUCTION_BRANCH ||
             github.event.repository.default_branch }}
-        run: .github/scripts/cloudflare-pages-deploy-cleanup.sh
+        run: .github/workflows/scripts/cloudflare-pages-deploy-cleanup.sh
