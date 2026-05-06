@@ -20,33 +20,6 @@ vp build
 
 deploy は Cloudflare Pages の Git integration に委譲する。Cloudflare Pages 側では build command を `vp build`、build output directory を `dist` に設定する。
 
-## Cloudflare Pages deployment cleanup
-
-Cloudflare Pages の preview deployment は `.github/workflows/cloudflare-pages-cleanup.yml` で整理する。
-
-trigger は次の 3 種類を使う。
-
-- `pull_request.closed`: close / merge された PR の head branch または head sha に一致する preview deployment を削除対象にする。
-- `check_run.completed`: default branch の Cloudflare Pages deploy が成功したあと、preview deployment を削除対象にする。
-- `workflow_dispatch`: `dry_run` と `mode` を指定して手動確認または手動削除する。
-
-削除処理の本体は `scripts/cloudflare-pages-cleanup.sh` に置く。Cloudflare REST API を `curl` で呼び、deployment の判定は `jq` で行う。`wrangler` は CI の主導線にはしない。
-
-必要な GitHub Secrets / Variables:
-
-| 種別     | 名前                                | 用途                                                           |
-| -------- | ----------------------------------- | -------------------------------------------------------------- |
-| Secret   | `CF_API_TOKEN`                      | Cloudflare Pages deployment の list / delete を行う API token  |
-| Variable | `CF_ACCOUNT_ID`                     | Cloudflare account id                                          |
-| Variable | `CF_PAGES_PROJECT_NAME`             | Cloudflare Pages project name                                  |
-| Variable | `CF_PAGES_PRODUCTION_BRANCH`        | production branch。未設定時は repository default branch        |
-| Variable | `CF_PAGES_CLEANUP_DRY_RUN`          | `true` の場合は削除せず候補だけ表示する                        |
-| Variable | `CF_PAGES_DELETE_ALIAS_DEPLOYMENTS` | `true` の場合は alias 付き preview deployment も削除対象にする |
-
-初期導入時は `CF_PAGES_CLEANUP_DRY_RUN=true` にする。workflow log と step summary に `delete` / `skip` の判定理由が出るため、削除候補を確認してから `false` に切り替える。
-
-production deployment、production branch の deployment、alias 付き deployment は default では削除しない。alias 付き deployment を消す場合は `CF_PAGES_DELETE_ALIAS_DEPLOYMENTS=true` を明示する。
-
 ## TypeScript
 
 `tsconfig.json` は `@tsconfig/strictest` と `@tsconfig/node24` を基礎にする。
