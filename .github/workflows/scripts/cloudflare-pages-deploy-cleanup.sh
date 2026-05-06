@@ -48,7 +48,7 @@ validate_mode() {
   esac
 
   if [[ "${cleanup_mode}" == "pr-closed" && -z "${pr_branch}" ]]; then
-    echo "error: CLEANUP_PR_BRANCH is required for pr-closed mode" >&2
+    echo "error: PR_BRANCH is required for pr-closed mode" >&2
     exit 1
   fi
 
