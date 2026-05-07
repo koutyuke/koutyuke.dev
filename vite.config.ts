@@ -71,6 +71,7 @@ export default defineConfig({
       pedantic: "off",
     },
     rules: {
+      curly: ["error", "all"],
       eqeqeq: "error",
       "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
       "no-console": "warn",

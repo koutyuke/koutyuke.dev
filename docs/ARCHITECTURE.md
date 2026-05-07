@@ -178,6 +178,7 @@ ARCHITECTURE.md
 - `noPropertyAccessFromIndexSignature` を前提に、index signature 由来の property は bracket access にする。
 - test utilities は `vite-plus/test` から import する。
 - component、hook、helper の関数定義は arrow function に統一する。
+- `if` / `else` / `for` / `while` などの block statement は必ず `{}` を使う。
 
 ### React
 
