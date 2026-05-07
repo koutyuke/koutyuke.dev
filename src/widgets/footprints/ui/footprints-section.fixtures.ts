@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 
-import { FootprintsSectionUI } from "./footprints-section.ui";
+import type { FootprintsSectionUI } from "./footprints-section.ui";
 
 type FootprintsSectionUIItems = ComponentProps<typeof FootprintsSectionUI>["footprints"];
 

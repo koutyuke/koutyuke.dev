@@ -10,9 +10,9 @@ type HomePageUIProps = {
   };
 };
 
-export function HomePageUI({
+export const HomePageUI = ({
   slots: { AboutSection, ContactSection, FooterSection, FootprintsSection, HeroSection },
-}: HomePageUIProps) {
+}: HomePageUIProps) => {
   return (
     <>
       <main>
@@ -24,4 +24,4 @@ export function HomePageUI({
       {FooterSection}
     </>
   );
-}
+};

@@ -177,6 +177,8 @@ ARCHITECTURE.md
 - `noUncheckedIndexedAccess` を前提に、array / object index access は undefined を考慮する。
 - `noPropertyAccessFromIndexSignature` を前提に、index signature 由来の property は bracket access にする。
 - test utilities は `vite-plus/test` から import する。
+- component、hook、helper の関数定義は arrow function に統一する。
+- `if` / `else` / `for` / `while` などの block statement は必ず `{}` を使う。
 
 ### React
 
@@ -207,6 +209,7 @@ Oxfmt の import sort に従う。
 4. project / relative import
 
 type import は同じ group 内で value import の後に置く。
+`import { type Foo } from "foo"` の inline type import は使わず、value import と type import を別 import declaration に分ける。
 
 ```ts
 import { z } from "zod";

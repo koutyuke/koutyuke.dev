@@ -10,7 +10,7 @@ type AboutPanelUIProps = {
   };
 };
 
-export function AboutPanelUI({ actions: { onBack } }: AboutPanelUIProps) {
+export const AboutPanelUI = ({ actions: { onBack } }: AboutPanelUIProps) => {
   return (
     <div className="flex size-full flex-col">
       <div className="flex flex-1 flex-col gap-2 p-1">
@@ -50,4 +50,4 @@ export function AboutPanelUI({ actions: { onBack } }: AboutPanelUIProps) {
       <PanelFooterAction type="back" onClick={onBack} />
     </div>
   );
-}
+};

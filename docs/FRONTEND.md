@@ -39,6 +39,8 @@ React は routing のためではなく component boundary のために使う。
 - domain data と domain UI は `entities/` に置く。
 - shared helper は `shared/lib/` に置く。
 - component 名は PascalCase、file 名は kebab-case にする。
+- component、hook、helper の関数定義は arrow function に統一し、`function` declaration は使わない。
+- `if` / `else` / `for` / `while` などの block statement は必ず `{}` を使う。
 
 ## State
 
@@ -78,6 +80,7 @@ Oxfmt の import sort に従う。
 4. project / relative import
 
 type import は同じ group 内で value import の後に置く。
+`import { type Foo } from "foo"` の inline type import は使わず、value import と type import を別 import declaration に分ける。
 
 ```ts
 import { z } from "zod";

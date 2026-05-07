@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 
 import { cn } from "../../../shared/lib";
-import { HomePageUI } from "./home-page.ui";
+import type { HomePageUI } from "./home-page.ui";
 
 type HomePageUISlots = ComponentProps<typeof HomePageUI>["slots"];
 
@@ -10,7 +10,7 @@ type MockSectionProps = {
   minHeight?: string;
 };
 
-function MockSection({ label, minHeight = "min-h-64" }: MockSectionProps) {
+const MockSection = ({ label, minHeight = "min-h-64" }: MockSectionProps) => {
   return (
     <section
       className={cn(
@@ -30,7 +30,7 @@ function MockSection({ label, minHeight = "min-h-64" }: MockSectionProps) {
       {label}
     </section>
   );
-}
+};
 
 export const mockHomePageSlots = {
   HeroSection: <MockSection label="HeroSection slot" minHeight="min-h-screen" />,

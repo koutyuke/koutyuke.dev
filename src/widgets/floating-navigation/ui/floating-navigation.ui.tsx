@@ -1,6 +1,7 @@
 import { MenuIcon } from "lucide-react";
 import { motion } from "motion/react";
-import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+import type { KeyboardEvent } from "react";
 
 import { cn } from "../../../shared/lib";
 import { AboutPanelUI } from "./panels/about-panel.ui";
@@ -19,16 +20,16 @@ const focusableSelector = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(",");
 
-function getFocusableElements(container: HTMLElement) {
+const getFocusableElements = (container: HTMLElement) => {
   return Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).filter(
     (element) =>
       !element.hasAttribute("disabled") && element.getAttribute("aria-hidden") !== "true",
   );
-}
+};
 
-function isOpen(view: FloatingNavigationView) {
+const isOpen = (view: FloatingNavigationView) => {
   return view !== "closed";
-}
+};
 
 type FloatingNavigationUIProps = {
   actions: {

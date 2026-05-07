@@ -1,5 +1,5 @@
 import { HeroSectionUI } from "./hero-section.ui";
 
-export function HeroSection() {
+export const HeroSection = () => {
   return <HeroSectionUI />;
-}
+};

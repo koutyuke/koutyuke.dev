@@ -1,6 +1,6 @@
 # AGENTS.md
 
-## 基本方針
+## Basic Policy
 
 - 日本語で対応する。
 - 技術用語、package 名、file path、command、code identifier は原語のまま書く。
@@ -8,7 +8,7 @@
 - 不確かな仕様、依存関係、外部サービスの挙動は確認してから扱う。
 - 変更後は、変更内容に見合う検証を実行し、実施した検証と未実施の検証を分けて報告する。
 
-## プロジェクト概要
+## Project Overview
 
 この repository は `koutyuke.dev` の personal portfolio site である。
 
@@ -29,11 +29,10 @@
 - Storybook build: `vp run sb:build`
 - production build: `vp build`
 - CSS lint: `vp run css:lint`
-- deploy: `vp run deploy`
 
 直接 `pnpm`, `vite`, `vitest`, `oxlint`, `oxfmt` を主導線にしない。Vite+ が wrap している tool は Vite+ 経由で使う。
 
-## 依存関係
+## Dependencies
 
 - runtime は Node.js v24。
 - package manager は pnpm。
@@ -41,7 +40,7 @@
 - `vp` はまだ Nix 管理していないため、各 developer が公式 installer で用意する。
 - 一時的な CLI が必要な場合は、永続 install ではなく `nix shell` または `vp dlx` を優先する。
 
-## コード規約
+## Coding Rules
 
 - 実装 file / directory は小文字 kebab-case にする。
 - 例外は `README.md`, `AGENTS.md`, `DESIGN.md` など、慣習または明示指定された documentation file に限る。
@@ -73,16 +72,9 @@
 
 環境構築だけの一時メモを `docs/` に残さない。方針が変わった場合は、該当する恒久ドキュメントへ反映する。
 
-## Git Hook / CI
-
-- Git hook は Lefthook を使う。
-- pre-commit は `vp staged` と `vp run css:lint` を実行する。
-- pre-push は `vp build` を実行する。
-- CI は `vp install`, `vp check`, `vp test`, `vp run sb:build`, `vp build` を実行する。
-
 ## Safety
 
 - secret、token、credential を hardcode しない。
 - 不要な依存関係を追加しない。
 - user が明示していない破壊的操作をしない。
-- Codex が生成した一時成果物、`dist/`, `storybook-static/`, `.tmp/`, `result` は、検証後に不要なら削除する。
+- Codex が生成した **git追跡外の一時成果物**、( `.tmp/`, `result`) は、検証後に不要なら削除する。

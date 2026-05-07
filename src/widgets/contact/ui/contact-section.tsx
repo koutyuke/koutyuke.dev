@@ -1,5 +1,5 @@
 import { ContactSectionUI } from "./contact-section.ui";
 
-export function ContactSection() {
+export const ContactSection = () => {
   return <ContactSectionUI />;
-}
+};

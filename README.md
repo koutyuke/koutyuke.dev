@@ -16,9 +16,9 @@
 
   <p>
     <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-111111?style=flat" alt="MIT License"></a>
-    <img src="https://img.shields.io/badge/React-19-61dafb?style=flat&logo=react&logoColor=111111" alt="React 19">
-    <img src="https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?style=flat&logo=tailwindcss&logoColor=ffffff" alt="Tailwind CSS v4">
-    <img src="https://img.shields.io/badge/Vite+-toolchain-646cff?style=flat&logo=vite&logoColor=ffffff" alt="Vite+">
+    <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-19-61dafb?style=flat&logo=react&logoColor=111111" alt="React 19"></a>
+    <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?style=flat&logo=tailwindcss&logoColor=ffffff" alt="Tailwind CSS v4"></a>
+    <a href="https://viteplus.dev/"><img src="https://img.shields.io/badge/Vite+-toolchain-646cff?style=flat&logo=vite&logoColor=ffffff" alt="Vite+"></a>
   </p>
 
 </div>
@@ -84,15 +84,22 @@ Daily development tasks are routed through Vite+.
 
 ```text
 src/
-├── app/                         # application shell
-├── components/                  # shared presentational components
-├── content/                     # profile and footprint content
+├── app/                         # application shell and global styles
+├── entities/                    # domain data and entity UI
+│   ├── footprint/               # footprint content model
+│   └── profile/                 # profile model and social links UI
 ├── features/
-│   ├── floating-navigation/     # navigation state, motion, panels
 │   └── theme/                   # theme state and DOM sync
-├── lib/                         # small shared utilities
-├── sections/                    # page sections
-└── styles/                      # global CSS and Tailwind theme
+├── pages/
+│   └── home/                    # home page composition
+├── shared/                      # shared UI primitives and utilities
+└── widgets/                     # page sections and floating navigation
+    ├── about/
+    ├── contact/
+    ├── floating-navigation/
+    ├── footer/
+    ├── footprints/
+    └── hero/
 ```
 
 ## Documentation

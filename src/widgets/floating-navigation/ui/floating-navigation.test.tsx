@@ -31,13 +31,13 @@ afterEach(() => {
   localStorage.clear();
 });
 
-function renderFloatingNavigation() {
+const renderFloatingNavigation = () => {
   return render(
     <Provider>
       <FloatingNavigation />
     </Provider>,
   );
-}
+};
 
 test("opens from a compact floating button into a menu panel", async () => {
   const user = userEvent.setup();

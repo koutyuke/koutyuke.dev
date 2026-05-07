@@ -1,6 +1,6 @@
 import { footprints } from "../../../entities/footprint";
 import { FootprintsSectionUI } from "./footprints-section.ui";
 
-export function FootprintsSection() {
+export const FootprintsSection = () => {
   return <FootprintsSectionUI footprints={footprints} />;
-}
+};

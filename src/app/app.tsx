@@ -1,11 +1,11 @@
 import { HomePage } from "../pages/home";
 import { FloatingNavigation } from "../widgets/floating-navigation";
 
-export function App() {
+export const App = () => {
   return (
     <>
       <HomePage />
       <FloatingNavigation />
     </>
   );
-}
+};
