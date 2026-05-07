@@ -72,11 +72,16 @@ export default defineConfig({
     },
     rules: {
       eqeqeq: "error",
+      "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
       "no-console": "warn",
       "no-debugger": "error",
       "react/react-in-jsx-scope": "off",
       "react/jsx-no-useless-fragment": "warn",
       "react/self-closing-comp": "warn",
+      "typescript/consistent-type-imports": [
+        "error",
+        { fixStyle: "separate-type-imports", prefer: "type-imports" },
+      ],
     },
     options: {
       typeAware: true,

@@ -1,4 +1,5 @@
-import { Laptop, type LucideIcon, Moon, Sun } from "lucide-react";
+import { Laptop, Moon, Sun } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 import { AnimatedCheckIcon } from "../../../../shared/ui/icons";
 import { PanelFooterAction, PanelItem } from "./parts";

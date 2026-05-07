@@ -8,8 +8,8 @@ import {
   NotebookPen,
   Palette,
   User,
-  type LucideIcon,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 import { links } from "../../../../entities/profile";
 import { cn } from "../../../../shared/lib";

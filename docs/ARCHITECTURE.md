@@ -207,6 +207,7 @@ Oxfmt の import sort に従う。
 4. project / relative import
 
 type import は同じ group 内で value import の後に置く。
+`import { type Foo } from "foo"` の inline type import は使わず、value import と type import を別 import declaration に分ける。
 
 ```ts
 import { z } from "zod";

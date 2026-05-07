@@ -1,6 +1,7 @@
 import { MenuIcon } from "lucide-react";
 import { motion } from "motion/react";
-import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+import type { KeyboardEvent } from "react";
 
 import { cn } from "../../../shared/lib";
 import { AboutPanelUI } from "./panels/about-panel.ui";

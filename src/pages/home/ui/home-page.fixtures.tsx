@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 
 import { cn } from "../../../shared/lib";
-import { HomePageUI } from "./home-page.ui";
+import type { HomePageUI } from "./home-page.ui";
 
 type HomePageUISlots = ComponentProps<typeof HomePageUI>["slots"];
 
