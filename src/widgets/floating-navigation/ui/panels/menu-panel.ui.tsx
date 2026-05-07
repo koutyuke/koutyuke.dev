@@ -38,7 +38,9 @@ type MenuPanelUIProps = {
   };
 };
 
-export function MenuPanelUI({ actions: { onClose, onOpenAbout, onOpenTheme } }: MenuPanelUIProps) {
+export const MenuPanelUI = ({
+  actions: { onClose, onOpenAbout, onOpenTheme },
+}: MenuPanelUIProps) => {
   return (
     <div className="flex size-full flex-col">
       <PanelItem
@@ -121,4 +123,4 @@ export function MenuPanelUI({ actions: { onClose, onOpenAbout, onOpenTheme } }: 
       <PanelFooterAction type="close" onClick={onClose} />
     </div>
   );
-}
+};

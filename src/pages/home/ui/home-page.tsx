@@ -5,7 +5,7 @@ import { FootprintsSection } from "../../../widgets/footprints";
 import { HeroSection } from "../../../widgets/hero";
 import { HomePageUI } from "./home-page.ui";
 
-export function HomePage() {
+export const HomePage = () => {
   return (
     <HomePageUI
       slots={{
@@ -17,4 +17,4 @@ export function HomePage() {
       }}
     />
   );
-}
+};

@@ -20,16 +20,16 @@ const focusableSelector = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(",");
 
-function getFocusableElements(container: HTMLElement) {
+const getFocusableElements = (container: HTMLElement) => {
   return Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).filter(
     (element) =>
       !element.hasAttribute("disabled") && element.getAttribute("aria-hidden") !== "true",
   );
-}
+};
 
-function isOpen(view: FloatingNavigationView) {
+const isOpen = (view: FloatingNavigationView) => {
   return view !== "closed";
-}
+};
 
 type FloatingNavigationUIProps = {
   actions: {

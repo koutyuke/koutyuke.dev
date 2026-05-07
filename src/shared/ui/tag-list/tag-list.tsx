@@ -5,7 +5,7 @@ type TagListProps = {
   tags: readonly string[];
 };
 
-export function TagList({ className, tags }: TagListProps) {
+export const TagList = ({ className, tags }: TagListProps) => {
   return (
     <ul className={cn("m-0 flex list-none flex-wrap gap-2 p-0", className)}>
       {tags.map((tag) => (
@@ -18,4 +18,4 @@ export function TagList({ className, tags }: TagListProps) {
       ))}
     </ul>
   );
-}
+};

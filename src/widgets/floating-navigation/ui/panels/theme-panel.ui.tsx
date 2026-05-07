@@ -25,7 +25,7 @@ type ThemePanelUIProps = {
   };
 };
 
-export function ThemePanelUI({ actions: { onBack, onThemeChange }, theme }: ThemePanelUIProps) {
+export const ThemePanelUI = ({ actions: { onBack, onThemeChange }, theme }: ThemePanelUIProps) => {
   return (
     <div className="flex size-full flex-col">
       {themeOptions.map(({ icon: Icon, label, value }) => (
@@ -43,4 +43,4 @@ export function ThemePanelUI({ actions: { onBack, onThemeChange }, theme }: Them
       <PanelFooterAction type="back" onClick={onBack} />
     </div>
   );
-}
+};

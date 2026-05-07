@@ -4,7 +4,7 @@ type SectionDividerProps = {
   className?: string;
 };
 
-export function SectionDivider({ className }: SectionDividerProps) {
+export const SectionDivider = ({ className }: SectionDividerProps) => {
   return (
     <div
       aria-hidden="true"
@@ -14,4 +14,4 @@ export function SectionDivider({ className }: SectionDividerProps) {
       )}
     />
   );
-}
+};

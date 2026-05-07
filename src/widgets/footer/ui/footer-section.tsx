@@ -1,5 +1,5 @@
 import { FooterSectionUI } from "./footer-section.ui";
 
-export function FooterSection() {
+export const FooterSection = () => {
   return <FooterSectionUI />;
-}
+};

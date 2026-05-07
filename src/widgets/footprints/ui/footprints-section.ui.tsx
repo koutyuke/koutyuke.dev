@@ -6,7 +6,7 @@ type FootprintsSectionUIProps = {
   footprints: readonly Footprint[];
 };
 
-export function FootprintsSectionUI({ footprints }: FootprintsSectionUIProps) {
+export const FootprintsSectionUI = ({ footprints }: FootprintsSectionUIProps) => {
   return (
     <section
       aria-labelledby="footprints-title"
@@ -47,4 +47,4 @@ export function FootprintsSectionUI({ footprints }: FootprintsSectionUIProps) {
       </div>
     </section>
   );
-}
+};

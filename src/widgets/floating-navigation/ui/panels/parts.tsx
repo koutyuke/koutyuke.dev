@@ -43,9 +43,9 @@ export const PanelItem = <T extends PanelItemElement = "div">({
   );
 };
 
-export function PanelSeparator() {
+export const PanelSeparator = () => {
   return <div aria-hidden="true" className="m-1.5 h-px bg-slate-9" />;
-}
+};
 
 type PanelFooterActionProps = {
   type: "back" | "close";

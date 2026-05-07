@@ -39,6 +39,7 @@ React は routing のためではなく component boundary のために使う。
 - domain data と domain UI は `entities/` に置く。
 - shared helper は `shared/lib/` に置く。
 - component 名は PascalCase、file 名は kebab-case にする。
+- component、hook、helper の関数定義は arrow function に統一し、`function` declaration は使わない。
 
 ## State
 

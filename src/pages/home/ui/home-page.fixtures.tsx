@@ -10,7 +10,7 @@ type MockSectionProps = {
   minHeight?: string;
 };
 
-function MockSection({ label, minHeight = "min-h-64" }: MockSectionProps) {
+const MockSection = ({ label, minHeight = "min-h-64" }: MockSectionProps) => {
   return (
     <section
       className={cn(
@@ -30,7 +30,7 @@ function MockSection({ label, minHeight = "min-h-64" }: MockSectionProps) {
       {label}
     </section>
   );
-}
+};
 
 export const mockHomePageSlots = {
   HeroSection: <MockSection label="HeroSection slot" minHeight="min-h-screen" />,

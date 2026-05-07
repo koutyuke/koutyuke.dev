@@ -3,7 +3,7 @@ import { ChevronDown } from "lucide-react";
 import { SocialLinks } from "../../../entities/profile";
 import { AsteriskIcon, KoutyukeIcon } from "../../../shared/ui/icons";
 
-export function HeroSectionUI() {
+export const HeroSectionUI = () => {
   return (
     <section
       aria-labelledby="hero-title"
@@ -57,4 +57,4 @@ export function HeroSectionUI() {
       </a>
     </section>
   );
-}
+};

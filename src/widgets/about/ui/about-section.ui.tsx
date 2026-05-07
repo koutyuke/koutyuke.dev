@@ -9,7 +9,7 @@ type AboutSectionUIProps = {
   };
 };
 
-export function AboutSectionUI({ techStacks }: AboutSectionUIProps) {
+export const AboutSectionUI = ({ techStacks }: AboutSectionUIProps) => {
   return (
     <section
       aria-labelledby="about-title"
@@ -68,4 +68,4 @@ export function AboutSectionUI({ techStacks }: AboutSectionUIProps) {
       </div>
     </section>
   );
-}
+};

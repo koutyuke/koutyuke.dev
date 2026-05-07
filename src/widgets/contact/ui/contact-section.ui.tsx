@@ -1,7 +1,7 @@
 import { SocialLinks } from "../../../entities/profile";
 import { SectionDivider } from "../../../shared/ui/section-divider";
 
-export function ContactSectionUI() {
+export const ContactSectionUI = () => {
   return (
     <section
       aria-labelledby="contact-title"
@@ -32,4 +32,4 @@ export function ContactSectionUI() {
       </div>
     </section>
   );
-}
+};

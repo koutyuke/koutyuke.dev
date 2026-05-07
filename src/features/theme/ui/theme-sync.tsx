@@ -3,7 +3,7 @@ import { useEffect, useLayoutEffect } from "react";
 
 import { resolvedThemeAtom, systemThemeAtom } from "../model/theme-atoms";
 
-export function ThemeSync() {
+export const ThemeSync = () => {
   const resolvedTheme = useAtomValue(resolvedThemeAtom);
   const [, setSystemTheme] = useAtom(systemThemeAtom);
 
@@ -31,4 +31,4 @@ export function ThemeSync() {
   }, [setSystemTheme]);
 
   return null;
-}
+};

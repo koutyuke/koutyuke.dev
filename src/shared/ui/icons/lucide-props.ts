@@ -9,10 +9,10 @@ type ResolvedStrokeIconProps = {
   svgProps: IconSvgProps;
 };
 
-export function resolveStrokeIconProps(
+export const resolveStrokeIconProps = (
   { absoluteStrokeWidth, color = "currentColor", size = 24, strokeWidth, ...svgProps }: IconProps,
   defaultStrokeWidth: IconProps["strokeWidth"] = 2,
-): ResolvedStrokeIconProps {
+): ResolvedStrokeIconProps => {
   const resolvedStrokeWidth = strokeWidth ?? defaultStrokeWidth;
   const numericSize = typeof size === "number" ? size : Number.parseFloat(size);
   const numericStrokeWidth =
@@ -30,15 +30,15 @@ export function resolveStrokeIconProps(
     strokeWidth: scaledStrokeWidth,
     svgProps,
   };
-}
+};
 
-export function resolveFillIconProps({
+export const resolveFillIconProps = ({
   absoluteStrokeWidth: _absoluteStrokeWidth,
   color = "currentColor",
   size = 24,
   strokeWidth: _strokeWidth,
   ...svgProps
-}: IconProps) {
+}: IconProps) => {
   void _absoluteStrokeWidth;
   void _strokeWidth;
 
@@ -47,4 +47,4 @@ export function resolveFillIconProps({
     size,
     svgProps,
   };
-}
+};

@@ -26,7 +26,7 @@ const socialLinks = [
   },
 ];
 
-export function SocialLinks({ className, showLabel = true }: SocialLinksProps) {
+export const SocialLinks = ({ className, showLabel = true }: SocialLinksProps) => {
   return (
     <div
       aria-label="Social links"
@@ -52,4 +52,4 @@ export function SocialLinks({ className, showLabel = true }: SocialLinksProps) {
       })}
     </div>
   );
-}
+};
