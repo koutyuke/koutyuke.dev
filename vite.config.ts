@@ -1,5 +1,6 @@
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
+import { fontSubsetter } from "rollup-plugin-font-subsetter";
 import { defineConfig } from "vite-plus";
 
 const checkIgnorePatterns = [
@@ -12,7 +13,7 @@ const checkIgnorePatterns = [
 ];
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), fontSubsetter()],
   server: {
     watch: {
       ignored: [/(^|[/\\])\../, "**/dist/**", "**/storybook-static/**"],
