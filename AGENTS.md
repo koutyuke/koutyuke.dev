@@ -77,4 +77,4 @@
 - secret、token、credential を hardcode しない。
 - 不要な依存関係を追加しない。
 - user が明示していない破壊的操作をしない。
-- Codex が生成した **git追跡外の一時成果物**、( `.tmp/`, `result`) は、検証後に不要なら削除する。
+- Codex が生成した **git追跡外になっていないの一時成果物**、( `.tmp/`, `result`) は、検証後に不要なら削除する。
