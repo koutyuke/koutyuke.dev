@@ -101,8 +101,64 @@ jobs:
           CHECK_RUN_ID: ${{ github.event.check_run.id }}
           HEAD_SHA: ${{ github.event.check_run.head_sha }}
 
-      - name: Run Lighthouse
+      - name: Comment Lighthouse analyzing
         if: steps.preview.outputs.url != ''
+        run: |
+          set -euo pipefail
+
+          mkdir -p .tmp/lighthouse
+
+          marker="<!-- lighthouse-preview-report -->"
+          short_sha="${DEPLOYMENT_SHA:0:7}"
+
+          {
+            printf "%s\n" "${marker}"
+            echo "## 🗼 Lighthouse Preview Report 🗼"
+            echo
+            echo "| | |"
+            echo "| --- | --- |"
+            echo "| Latest Commit: | \`${short_sha}\` |"
+            echo "| Status: | 📊 Analyzing... |"
+            echo "| Target URL: | ${PREVIEW_URL} |"
+          } > .tmp/lighthouse/comment.md
+
+          existing_comment_id="$(
+            gh api \
+              --method GET \
+              "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" \
+              --paginate \
+              --field per_page=100 |
+              jq --slurp -r '
+                flatten
+                | map(select(.user.type == "Bot" and (.body | contains("<!-- lighthouse-preview-report -->"))))
+                | first
+                | .id // ""
+              '
+          )"
+
+          jq -n --rawfile body .tmp/lighthouse/comment.md '{body: $body}' > .tmp/lighthouse/comment-payload.json
+
+          if [[ -n "${existing_comment_id}" ]]; then
+            gh api \
+              --method PATCH \
+              "repos/${GITHUB_REPOSITORY}/issues/comments/${existing_comment_id}" \
+              --input .tmp/lighthouse/comment-payload.json >/dev/null
+          else
+            gh api \
+              --method POST \
+              "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" \
+              --input .tmp/lighthouse/comment-payload.json >/dev/null
+          fi
+        env:
+          DEPLOYMENT_SHA: ${{ steps.preview.outputs.sha }}
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.preview.outputs.pr-number }}
+          PREVIEW_URL: ${{ steps.preview.outputs.url }}
+
+      - name: Run Lighthouse
+        id: lighthouse
+        if: steps.preview.outputs.url != ''
+        continue-on-error: true
         run: |
           mkdir -p .tmp/lighthouse
           npx --yes lighthouse@13.1.0 "${PREVIEW_URL}" \
@@ -115,7 +171,7 @@ jobs:
           PREVIEW_URL: ${{ steps.preview.outputs.url }}
 
       - name: Upload Lighthouse report
-        if: steps.preview.outputs.url != ''
+        if: steps.preview.outputs.url != '' && steps.lighthouse.outcome == 'success'
         id: upload-report
         uses: actions/upload-artifact@v4
         with:
@@ -124,8 +180,8 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      - name: Comment Lighthouse score
-        if: steps.preview.outputs.url != ''
+      - name: Comment Lighthouse result
+        if: always() && steps.preview.outputs.url != ''
         run: |
           set -euo pipefail
 
@@ -141,6 +197,7 @@ jobs:
           report_json=".tmp/lighthouse/report.report.json"
           marker="<!-- lighthouse-preview-report -->"
           run_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          short_sha="${DEPLOYMENT_SHA:0:7}"
 
           score() {
             jq -r --arg category "${1}" '.categories[$category].score * 100 | round' "${report_json}"
@@ -150,29 +207,53 @@ jobs:
             jq -r --arg audit_id "${1}" '.audits[$audit_id].displayValue // "n/a"' "${report_json}"
           }
 
-          {
-            echo "## Lighthouse Preview"
-            echo
-            echo "Target: ${PREVIEW_URL}"
-            echo
-            echo "| Category | Score |"
-            echo "| --- | ---: |"
-            echo "| Performance | $(score "performance") |"
-            echo "| Accessibility | $(score "accessibility") |"
-            echo "| Best Practices | $(score "best-practices") |"
-            echo "| SEO | $(score "seo") |"
-            echo
-            echo "| Metric | Value |"
-            echo "| --- | ---: |"
-            echo "| First Contentful Paint | $(display_value "first-contentful-paint") |"
-            echo "| Largest Contentful Paint | $(display_value "largest-contentful-paint") |"
-            echo "| Total Blocking Time | $(display_value "total-blocking-time") |"
-            echo "| Cumulative Layout Shift | $(display_value "cumulative-layout-shift") |"
-            echo "| Speed Index | $(display_value "speed-index") |"
-            echo
-            echo "[Lighthouse report artifact](${ARTIFACT_URL})"
-            echo "[Workflow run](${run_url})"
-          } > .tmp/lighthouse/summary.md
+          if [[ "${LIGHTHOUSE_OUTCOME}" == "success" ]]; then
+            {
+              echo "## 🗼 Lighthouse Preview Report 🗼"
+              echo
+              echo "| | |"
+              echo "| --- | --- |"
+              echo "| Latest Commit: | \`${short_sha}\` |"
+              echo "| Status: | ✅  Successful! |"
+              echo "| Target URL: | ${PREVIEW_URL} |"
+              echo
+              echo "### Analyze Report"
+              echo
+              echo "| Category | Score |"
+              echo "| --- | ---: |"
+              echo "| Performance | $(score "performance") |"
+              echo "| Accessibility | $(score "accessibility") |"
+              echo "| Best Practices | $(score "best-practices") |"
+              echo "| SEO | $(score "seo") |"
+              echo
+              echo "| Metric | Value |"
+              echo "| --- | ---: |"
+              echo "| First Contentful Paint | $(display_value "first-contentful-paint") |"
+              echo "| Largest Contentful Paint | $(display_value "largest-contentful-paint") |"
+              echo "| Total Blocking Time | $(display_value "total-blocking-time") |"
+              echo "| Cumulative Layout Shift | $(display_value "cumulative-layout-shift") |"
+              echo "| Speed Index | $(display_value "speed-index") |"
+              echo
+              echo "### Detailed Report"
+              echo
+              echo "[Report Artifact](${ARTIFACT_URL})"
+              echo "[Workflow Run](${run_url})"
+            } > .tmp/lighthouse/summary.md
+          else
+            {
+              echo "## 🗼 Lighthouse Preview Report 🗼"
+              echo
+              echo "| | |"
+              echo "| --- | --- |"
+              echo "| Latest Commit: | \`${short_sha}\` |"
+              echo "| Status: | ❌ Failure |"
+              echo "| Target URL: | ${PREVIEW_URL} |"
+              echo
+              echo "### Failure Details"
+              echo
+              echo "[Workflow Run](${run_url})"
+            } > .tmp/lighthouse/summary.md
+          fi
 
           cat .tmp/lighthouse/summary.md >> "${GITHUB_STEP_SUMMARY}"
           printf "%s\n" "${marker}" > .tmp/lighthouse/comment.md
@@ -209,5 +290,10 @@ jobs:
           ARTIFACT_URL: ${{ steps.upload-report.outputs.artifact-url }}
           DEPLOYMENT_SHA: ${{ steps.preview.outputs.sha }}
           GH_TOKEN: ${{ github.token }}
+          LIGHTHOUSE_OUTCOME: ${{ steps.lighthouse.outcome }}
           PR_NUMBER: ${{ steps.preview.outputs.pr-number }}
           PREVIEW_URL: ${{ steps.preview.outputs.url }}
+
+      - name: Fail when Lighthouse failed
+        if: steps.preview.outputs.url != '' && steps.lighthouse.outcome == 'failure'
+        run: exit 1
