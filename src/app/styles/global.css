@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "tailwindcss" source(none);
 @import "the-new-css-reset/css/reset.css" layer(base);
 @import "@radix-ui/colors/slate.css";
 @import "@radix-ui/colors/slate-dark.css";
@@ -10,6 +10,33 @@
 @import "@radix-ui/colors/teal-dark.css";
 @import "@radix-ui/colors/yellow.css";
 @import "@radix-ui/colors/yellow-dark.css";
+
+@source "../../../index.html";
+@source "../../**/*.{ts,tsx}"; /* target `src` directory */
+
+@font-face {
+  font-family: Caveat;
+  src: url("../../shared/assets/fonts/Caveat-Regular.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Zen Maru Gothic";
+  src: url("../../shared/assets/fonts/ZenMaruGothic-Regular.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Zen Maru Gothic";
+  src: url("../../shared/assets/fonts/ZenMaruGothic-Medium.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 500;
+}
 
 @theme {
   --color-*: initial;

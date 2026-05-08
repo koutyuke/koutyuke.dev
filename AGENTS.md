@@ -77,4 +77,4 @@
 - secret、token、credential を hardcode しない。
 - 不要な依存関係を追加しない。
 - user が明示していない破壊的操作をしない。
-- Codex が生成した **git追跡外の一時成果物**、( `.tmp/`, `result`) は、検証後に不要なら削除する。
+- Codex が生成した一時成果物のうち、`.gitignore` の対象になっていない git 追跡外 file / directory は、検証後に削除する。`.gitignore` の対象になっている生成物は repository 側で容認しているため、原則として削除対象にしない。
