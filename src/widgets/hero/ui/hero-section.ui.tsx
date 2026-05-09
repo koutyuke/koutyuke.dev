@@ -48,7 +48,7 @@ export const HeroSectionUI = () => {
       </div>
 
       <a
-        aria-label="Scroll to about section"
+        aria-label="scroll down to about section"
         className="absolute bottom-20 left-1/2 inline-flex -translate-x-1/2 flex-col items-center gap-0.5 font-handwritten text-base leading-none text-slate-11 no-underline"
         href="#about"
       >

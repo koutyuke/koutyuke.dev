@@ -13,7 +13,7 @@ export const SectionHeading = ({ align = "start", eyebrow, id, title }: SectionH
       <h2 className="m-0 font-handwritten text-4xl leading-[1.05] text-slate-12" id={id}>
         {title}
       </h2>
-      {eyebrow ? <p className="m-0 text-xs font-medium text-slate-10">{eyebrow}</p> : null}
+      {eyebrow ? <p className="m-0 text-xs font-medium text-slate-11">{eyebrow}</p> : null}
     </header>
   );
 };
