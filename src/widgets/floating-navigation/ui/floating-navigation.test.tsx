@@ -65,6 +65,22 @@ test("opens the theme panel and reports selected theme", async () => {
   expect(localStorage.getItem(storageKey.theme)).toBe(JSON.stringify("dark"));
 });
 
+test("exposes the selected theme state to assistive technology", async () => {
+  const user = userEvent.setup();
+
+  renderFloatingNavigation();
+
+  await user.click(screen.getByRole("button", { name: "Open navigation" }));
+  await user.click(screen.getByRole("button", { name: "Theme" }));
+
+  expect(screen.getByRole("button", { name: "System" }).getAttribute("aria-pressed")).toBe("true");
+  expect(screen.getByRole("button", { name: "Light" }).getAttribute("aria-pressed")).toBe("false");
+
+  await user.click(screen.getByRole("button", { name: "Dark" }));
+
+  expect(screen.getByRole("button", { name: "Dark" }).getAttribute("aria-pressed")).toBe("true");
+});
+
 test("moves focus into the active panel when switching panels", async () => {
   const user = userEvent.setup();
 

@@ -32,9 +32,14 @@ export const ThemePanelUI = ({ actions: { onBack, onThemeChange }, theme }: Them
         <PanelItem
           key={value}
           as="button"
+          aria-pressed={theme === value}
           onClick={() => onThemeChange(value)}
           LeftContent={<Icon aria-hidden="true" className="size-6 shrink-0" />}
-          RightContent={theme === value ? <AnimatedCheckIcon className="size-5" /> : null}
+          RightContent={
+            theme === value ? (
+              <AnimatedCheckIcon aria-hidden="true" className="size-5" focusable="false" />
+            ) : null
+          }
         >
           {label}
         </PanelItem>
